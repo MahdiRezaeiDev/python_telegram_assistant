@@ -1,4 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { Head } from '@inertiajs/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
@@ -27,7 +28,8 @@ export default function MyAccount() {
     if (!me) return <p>Loading account info...</p>;
 
     return (
-        <AuthenticatedLayout>
+        <AuthenticatedLayout title="حساب کاربری">
+            <Head title="حساب کاربری" />
             <div className="mx-auto mt-20 max-w-md rounded-lg bg-white p-6 shadow">
                 <h1 className="mb-4 text-xl font-bold">
                     Your Telegram Account
