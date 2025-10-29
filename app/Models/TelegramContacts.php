@@ -17,4 +17,9 @@ class TelegramContacts extends Model
         'is_blocked',
         'profile_photo_path',
     ];
+
+    public function blockedByUser()
+    {
+        return $this->hasMany(BlockedContacts::class, 'contact_id');
+    }
 }

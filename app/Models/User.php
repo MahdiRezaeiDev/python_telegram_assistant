@@ -45,4 +45,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function blockedContacts()
+    {
+        return $this->belongsToMany(TelegramContacts::class, 'user_blocked_contacts');
+    }
 }

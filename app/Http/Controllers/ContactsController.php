@@ -15,12 +15,26 @@ class ContactsController extends Controller
      */
     public function index()
     {
-        $contacts = TelegramContacts::paginate('30');
+        $userId = Auth::id();
+
+        $contacts = TelegramContacts::query()
+            ->withExists(['blockedByUser' => function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            }])
+            ->paginate(30);
+
+        // Rename the relation flag to something more readable (optional)
+        $contacts->getCollection()->transform(function ($contact) {
+            $contact->is_blocked = $contact->blocked_by_user_exists; // Laravel auto-generates this name
+            unset($contact->blocked_by_user_exists);
+            return $contact;
+        });
 
         return Inertia::render('Contacts/Index', [
-            'contacts' => $contacts
+            'contacts' => $contacts,
         ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
