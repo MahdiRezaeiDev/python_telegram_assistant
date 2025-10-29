@@ -18,7 +18,7 @@ class TelegramController extends Controller
     public function getAccountInfo(Request $request)
     {
         $response = Http::post('http://127.0.0.1:5000/api/telegram/me', [
-            'phone' => $request->phone,
+            'user_id' => Auth::id(),
         ]);
 
         return $response->json();
@@ -33,7 +33,7 @@ class TelegramController extends Controller
     public function getMyGroups(Request $request)
     {
         $response = Http::post('http://127.0.0.1:5000/api/telegram/my-groups', [
-            'phone' => $request->phone,
+            'user_id' => Auth::id(),
         ]);
 
         return $response->json();
