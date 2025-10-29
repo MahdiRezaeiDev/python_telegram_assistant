@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 
@@ -17,6 +18,21 @@ class TelegramController extends Controller
     public function getAccountInfo(Request $request)
     {
         $response = Http::post('http://127.0.0.1:5000/api/telegram/me', [
+            'phone' => $request->phone,
+        ]);
+
+        return $response->json();
+    }
+
+    public function myGroups()
+    {
+        return Inertia::render('Telegram/MyGroups');
+    }
+
+
+    public function getMyGroups(Request $request)
+    {
+        $response = Http::post('http://127.0.0.1:5000/api/telegram/my-groups', [
             'phone' => $request->phone,
         ]);
 
@@ -40,6 +56,7 @@ class TelegramController extends Controller
             'phone' => $request->phone,
             'apiId' => $request->api_id,
             'apiHash' => $request->api_hash,
+            'user_id' => Auth::id()
         ]);
 
         return $response->json();

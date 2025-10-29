@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('telegram_accounts', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->string('phone', 32)->unique();
             $table->integer('api_id');
             $table->string('api_hash', 128);

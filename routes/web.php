@@ -22,12 +22,19 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('telegram')->group(function () {
         Route::get('/me', [TelegramController::class, 'me'])->name('myAccount');
+        Route::get('/myGroups', [TelegramController::class, 'myGroups'])->name('myGroups');
+
+
+
         Route::get('/register', [TelegramController::class, 'index'])->name('loginPage');
         Route::get('/verify', [TelegramController::class, 'verify'])->name('verifyPage');
         Route::get('/password', [TelegramController::class, 'password'])->name('passwordPage');
 
 
         Route::post('/me', [TelegramController::class, 'getAccountInfo'])->name('getAccountInfo');
+        Route::post('/myGroups', [TelegramController::class, 'getMyGroups'])->name('getMyGroups');
+
+
         Route::post('/register', [TelegramController::class, 'register'])->name('registerAccount');
         Route::post('/verify', [TelegramController::class, 'verifyCode'])->name('verifyAccount');
         Route::post('/verifyPassword', [TelegramController::class, 'verifyPassword'])->name('verifyAccountPassword');

@@ -105,6 +105,17 @@ export default function Sidebar() {
                             >
                                 <div className="flex items-end gap-2">
                                     <LayoutDashboard className="h-5 w-5" />
+                                    <span>مدیریت کاربران</span>
+                                </div>
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink
+                                href={route('dashboard')}
+                                active={route().current('dashboard')}
+                            >
+                                <div className="flex items-end gap-2">
+                                    <LayoutDashboard className="h-5 w-5" />
                                     <span>حساب کاربری شما</span>
                                 </div>
                             </NavLink>

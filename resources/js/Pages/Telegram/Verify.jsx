@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { router } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import axios from 'axios';
 import { useState } from 'react';
 
@@ -36,7 +36,8 @@ export default function Verify() {
     };
 
     return (
-        <AuthenticatedLayout>
+        <AuthenticatedLayout title="کد تایید ورود">
+            <Head title="کد تایید ورود" />
             <div className="mx-auto mt-20 max-w-md rounded-lg bg-white p-6 shadow-lg">
                 <h1 className="mb-4 text-xl font-bold">
                     Enter Verification Code
