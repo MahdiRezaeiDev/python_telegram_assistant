@@ -15,7 +15,7 @@ class TelegramController extends Controller
         return Inertia::render('Telegram/MyAccount');
     }
 
-    public function getAccountInfo(Request $request)
+    public function getAccountInfo()
     {
         $response = Http::post('http://127.0.0.1:5000/api/telegram/me', [
             'user_id' => Auth::id(),
@@ -30,7 +30,7 @@ class TelegramController extends Controller
     }
 
 
-    public function getMyGroups(Request $request)
+    public function getMyGroups()
     {
         $response = Http::post('http://127.0.0.1:5000/api/telegram/my-groups', [
             'user_id' => Auth::id(),

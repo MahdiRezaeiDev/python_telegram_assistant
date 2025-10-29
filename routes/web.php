@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ContactsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TelegramController;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/verifyPassword', [TelegramController::class, 'verifyPassword'])->name('verifyAccountPassword');
         Route::post('/send-message', [TelegramController::class, 'sendMessage'])->name('sendMessage');
     });
+
+    Route::resource('contacts', ContactsController::class);
 });
 
 
