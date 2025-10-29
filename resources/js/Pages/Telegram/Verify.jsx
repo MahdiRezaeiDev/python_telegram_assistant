@@ -1,3 +1,4 @@
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { router } from '@inertiajs/react';
 import axios from 'axios';
 import { useState } from 'react';
@@ -35,24 +36,30 @@ export default function Verify() {
     };
 
     return (
-        <div className="mx-auto mt-20 max-w-md rounded-lg bg-white p-6 shadow-lg">
-            <h1 className="mb-4 text-xl font-bold">Enter Verification Code</h1>
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    placeholder="Code"
-                    className="mb-4 w-full border p-2"
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                />
-                <button
-                    disabled={loading}
-                    className="w-full rounded bg-green-500 px-4 py-2 text-white"
-                >
-                    {loading ? 'Verifying...' : 'Verify'}
-                </button>
-            </form>
-            {message && <p className="mt-4 text-sm text-gray-700">{message}</p>}
-        </div>
+        <AuthenticatedLayout>
+            <div className="mx-auto mt-20 max-w-md rounded-lg bg-white p-6 shadow-lg">
+                <h1 className="mb-4 text-xl font-bold">
+                    Enter Verification Code
+                </h1>
+                <form onSubmit={handleSubmit}>
+                    <input
+                        type="text"
+                        placeholder="Code"
+                        className="mb-4 w-full border p-2"
+                        value={code}
+                        onChange={(e) => setCode(e.target.value)}
+                    />
+                    <button
+                        disabled={loading}
+                        className="w-full rounded bg-green-500 px-4 py-2 text-white"
+                    >
+                        {loading ? 'Verifying...' : 'Verify'}
+                    </button>
+                </form>
+                {message && (
+                    <p className="mt-4 text-sm text-gray-700">{message}</p>
+                )}
+            </div>
+        </AuthenticatedLayout>
     );
 }

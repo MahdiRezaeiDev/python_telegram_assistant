@@ -29,6 +29,25 @@
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "tailwindcss": "^3.2.1",
-        "vite": "^7.0.7"
+        "vite": "^7.0.4"
+    },
+    "dependencies": {
+        "@heroicons/react": "^2.2.0",
+        "@majidh1/jalalidatepicker": "^0.9.12",
+        "@radix-ui/react-slot": "^1.2.3",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "date-fns": "^4.1.0",
+        "html2pdf.js": "^0.12.1",
+        "jspdf": "^3.0.3",
+        "jspdf-autotable": "^5.0.2",
+        "lucide-react": "^0.544.0",
+        "moment-jalaali": "^0.10.4",
+        "react-day-picker": "^9.11.0",
+        "react-multi-date-picker": "^4.5.2",
+        "recharts": "^3.2.1",
+        "tailwind-merge": "^3.3.1",
+        "tailwindcss-animate": "^1.0.7",
+        "xlsx": "^0.18.5"
     }
 }
