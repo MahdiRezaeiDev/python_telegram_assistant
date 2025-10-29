@@ -13,18 +13,10 @@ return new class extends Migration
     {
         Schema::create('user_blocked_contacts', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('user_id')
-                ->constrained('users')
-                ->cascadeOnDelete();
-
-            $table->foreignId('contact_id')
-                ->constrained('telegram_contacts')
-                ->cascadeOnDelete();
-
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('contact_id')->constrained('telegram_contacts')->cascadeOnDelete();
             $table->timestamps();
-
-            $table->unique(['user_id', 'contact_id']); // prevent duplicates
+            $table->unique(['user_id', 'contact_id']);
         });
     }
 

@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::post('contacts/get', [ContactsController::class, 'getContacts'])->name('contacts.get');
+    Route::post('/contacts/toggle-block', [ContactsController::class, 'toggleBlock'])->name('contacts.toggleBlock');
     Route::resource('/contacts', ContactsController::class);
 });
 

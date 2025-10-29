@@ -1,15 +1,53 @@
 import PrimaryButton from '@/Components/PrimaryButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
+import axios from 'axios';
+import { Search } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
-export default function index({ contacts }) {
+export default function Index({ contacts }) {
+    const [contactList, setContactList] = useState(contacts || []);
+    const [search, setSearch] = useState('');
+
     const loadContacts = async () => {
-        const res = await axios.post(route('contacts.get'));
-
-        console.log(res);
+        try {
+            const res = await axios.post(route('contacts.get'));
+            if (res.data?.data) {
+                setContactList(res.data.data);
+            }
+        } catch (err) {
+            console.error(err);
+        }
     };
 
-    console.log(contacts);
+    const toggleBlock = async (contactId) => {
+        try {
+            const res = await axios.post(route('contacts.toggleBlock'), {
+                contact_id: contactId,
+            });
+
+            const updated = contactList.map((c) =>
+                c.id === contactId ? { ...c, is_blocked: res.data.blocked } : c,
+            );
+            setContactList(updated);
+        } catch (error) {
+            console.error('Error toggling block:', error);
+        }
+    };
+
+    // ✅ Filtered contacts based on search
+    const filteredContacts = useMemo(() => {
+        return contactList.filter(
+            (c) =>
+                (c.full_name || '')
+                    .toLowerCase()
+                    .includes(search.toLowerCase()) ||
+                (c.username || '')
+                    .toLowerCase()
+                    .includes(search.toLowerCase()) ||
+                (c.phone || '').includes(search),
+        );
+    }, [contactList, search]);
 
     return (
         <AuthenticatedLayout title="لیست مخاطبین">
@@ -19,10 +57,21 @@ export default function index({ contacts }) {
                 <div className="mb-12 w-full px-4">
                     <div className="relative flex w-full min-w-0 flex-col overflow-auto break-words rounded pb-8 shadow-lg">
                         {/* Header */}
-                        <div className="mb-0 flex items-center justify-between rounded-t border-0 px-4 py-3">
+                        <div className="mb-0 flex items-baseline justify-between rounded-t border-0 px-4 py-3">
                             <h3 className="text-blueGray-700 text-lg font-semibold">
                                 لیست پرسنل ثبت شده
                             </h3>
+                            <div className="relative w-96">
+                                {/* Search input */}
+                                <input
+                                    type="text"
+                                    placeholder="جستجو بر اساس نام، شماره یا نام کاربری..."
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    className="w-full rounded border px-4 py-2 text-xs shadow-sm focus:outline-none focus:ring focus:ring-teal-400"
+                                />
+                                <Search className="absolute left-2 top-2 h-4 w-4" />
+                            </div>
                             <PrimaryButton
                                 onClick={loadContacts}
                                 className="rounded bg-teal-700 px-4 py-2 text-xs font-bold text-white hover:shadow-md"
@@ -55,58 +104,70 @@ export default function index({ contacts }) {
                                             شناسه یکتا
                                         </th>
                                         <th className="px-6 py-3 text-right text-sm">
-                                            عملیات
+                                            بلاک
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {contacts.data.length ? (
-                                        contacts.data.map((contact, index) => (
-                                            <tr
-                                                key={contact.id}
-                                                className="odd:bg-gray-50"
-                                            >
-                                                <td className="whitespace-nowrap p-4 px-6 text-sm">
-                                                    {++index}
-                                                </td>
-                                                <td className="whitespace-nowrap p-4 px-6 text-sm">
-                                                    {contact.full_name}
-                                                </td>
-                                                <td className="whitespace-nowrap p-4 px-6 text-sm">
-                                                    {contact.phone || '-'}
-                                                </td>
-                                                <td className="whitespace-nowrap p-4 px-6 text-sm">
-                                                    {contact.username || '-'}
-                                                </td>
-
-                                                {/* ✅ Profile photo */}
-                                                <td className="whitespace-nowrap p-4 px-6 text-sm">
-                                                    {contact.profile_photo_path ? (
-                                                        <img
-                                                            src={
-                                                                'http://127.0.0.1:5000/' +
-                                                                contact.profile_photo_path
+                                    {filteredContacts.length ? (
+                                        filteredContacts.map(
+                                            (contact, index) => (
+                                                <tr
+                                                    key={contact.id}
+                                                    className={`odd:bg-gray-50 ${contact.is_blocked ? 'bg-red-50' : ''}`}
+                                                >
+                                                    <td className="whitespace-nowrap p-4 px-6 text-sm">
+                                                        {++index}
+                                                    </td>
+                                                    <td className="whitespace-nowrap p-4 px-6 text-sm">
+                                                        {contact.full_name}
+                                                    </td>
+                                                    <td className="whitespace-nowrap p-4 px-6 text-sm">
+                                                        {contact.phone || '-'}
+                                                    </td>
+                                                    <td className="whitespace-nowrap p-4 px-6 text-sm">
+                                                        {contact.username ||
+                                                            '-'}
+                                                    </td>
+                                                    <td className="whitespace-nowrap p-4 px-6 text-sm">
+                                                        {contact.profile_photo_path ? (
+                                                            <img
+                                                                src={
+                                                                    'http://127.0.0.1:5000/' +
+                                                                    contact.profile_photo_path
+                                                                }
+                                                                alt={
+                                                                    contact.full_name
+                                                                }
+                                                                className="h-10 w-10 rounded-full border object-cover"
+                                                            />
+                                                        ) : (
+                                                            <span className="text-gray-400">
+                                                                بدون عکس
+                                                            </span>
+                                                        )}
+                                                    </td>
+                                                    <td className="whitespace-nowrap p-4 px-6 text-sm">
+                                                        {contact.api_bot_id ||
+                                                            '-'}
+                                                    </td>
+                                                    <td className="whitespace-nowrap p-4 px-6 text-center text-sm">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={
+                                                                contact.is_blocked
                                                             }
-                                                            alt={
-                                                                contact.full_name
+                                                            onChange={() =>
+                                                                toggleBlock(
+                                                                    contact.id,
+                                                                )
                                                             }
-                                                            className="h-10 w-10 rounded-full border object-cover"
+                                                            className="h-5 w-5 cursor-pointer accent-red-600"
                                                         />
-                                                    ) : (
-                                                        <span className="text-gray-400">
-                                                            بدون عکس
-                                                        </span>
-                                                    )}
-                                                </td>
-
-                                                <td className="whitespace-nowrap p-4 px-6 text-sm">
-                                                    {contact.api_bot_id || '-'}
-                                                </td>
-                                                <td className="whitespace-nowrap p-4 px-6 text-sm">
-                                                    {/* Action buttons can go here */}
-                                                </td>
-                                            </tr>
-                                        ))
+                                                    </td>
+                                                </tr>
+                                            ),
+                                        )
                                     ) : (
                                         <tr>
                                             <td
@@ -120,76 +181,9 @@ export default function index({ contacts }) {
                                 </tbody>
                             </table>
                         </div>
-                        {/* Pagination */}
-                        {contacts.links.length > 3 && (
-                            <div className="mt-4 flex justify-center">
-                                {contacts.links.map((link, idx) => {
-                                    let label = link.label;
-
-                                    // Convert pagination text to Persian
-                                    if (label.includes('Next')) label = 'بعدی';
-                                    else if (label.includes('Previous'))
-                                        label = 'قبلی';
-
-                                    return (
-                                        <button
-                                            key={idx}
-                                            onClick={() =>
-                                                link.url && router.get(link.url)
-                                            }
-                                            className={`mx-1 rounded px-3 py-1 text-sm ${
-                                                link.active
-                                                    ? 'bg-teal-700 text-white'
-                                                    : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-                                            } ${!link.url ? 'cursor-not-allowed opacity-50' : ''}`}
-                                            dangerouslySetInnerHTML={{
-                                                __html: label,
-                                            }}
-                                        />
-                                    );
-                                })}
-                            </div>
-                        )}
                     </div>
                 </div>
             </div>
-
-            {/* Delete Modal */}
-            {/* <Modal show={confirmingStaffDeletion} onClose={closeModal}>
-                <form onSubmit={deleteStaff} className="p-6">
-                    <h2 className="text-lg font-medium text-gray-900">
-                        آیا مطمئن هستید که می‌خواهید این پرسنل را حذف کنید؟
-                    </h2>
-                    <p className="mt-1 text-sm text-gray-600">
-                        بعد از حذف پرسنل، اطلاعات مرتبط با آن دیگر در دسترس
-                        نخواهد بود.
-                    </p>
-                    <div className="mt-6 flex justify-end">
-                        <SecondaryButton onClick={closeModal}>
-                            انصراف
-                        </SecondaryButton>
-                        <DangerButton className="ms-3" disabled={processing}>
-                            حذف
-                        </DangerButton>
-                    </div>
-                </form>
-            </Modal> */}
-
-            {/* Success Toast */}
-            {/* <Transition
-                show={show}
-                enter="transition ease-in-out duration-300"
-                enterFrom="opacity-0 translate-y-2"
-                enterTo="opacity-100 translate-y-0"
-                leave="transition ease-in-out duration-500"
-                leaveFrom="opacity-100 translate-y-0"
-                leaveTo="opacity-0 translate-y-2"
-                className="fixed bottom-6 left-6 z-50"
-            >
-                <div className="rounded bg-green-600 px-6 py-3 text-sm font-semibold text-white shadow-lg">
-                    {flash.success}
-                </div>
-            </Transition> */}
         </AuthenticatedLayout>
     );
 }

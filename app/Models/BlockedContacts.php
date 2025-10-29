@@ -7,4 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class BlockedContacts extends Model
 {
     protected $table = 'user_blocked_contacts';
+
+    protected $fillable = [
+        'user_id',
+        'contact_id'
+    ];
 }

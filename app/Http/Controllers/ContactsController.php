@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BlockedContacts;
 use App\Models\TelegramContacts;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,26 +14,49 @@ class ContactsController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function index()
     {
-        $userId = Auth::id();
+        $user = Auth::user();
 
-        $contacts = TelegramContacts::query()
-            ->withExists(['blockedByUser' => function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            }])
-            ->paginate(30);
+        // Get all contacts
+        $contacts = TelegramContacts::select('id', 'full_name', 'phone', 'username', 'profile_photo_path', 'api_bot_id')->get();
 
-        // Rename the relation flag to something more readable (optional)
-        $contacts->getCollection()->transform(function ($contact) {
-            $contact->is_blocked = $contact->blocked_by_user_exists; // Laravel auto-generates this name
-            unset($contact->blocked_by_user_exists);
+        // Get blocked contacts by current user
+        $blockedIds = BlockedContacts::where('user_id', $user->id)->pluck('contact_id')->toArray();
+
+        // Add "is_blocked" property
+        $contacts = $contacts->map(function ($contact) use ($blockedIds) {
+            $contact->is_blocked = in_array($contact->id, $blockedIds);
             return $contact;
         });
 
-        return Inertia::render('Contacts/Index', [
-            'contacts' => $contacts,
+        return inertia('Contacts/Index', [
+            'contacts' => $contacts
         ]);
+    }
+
+    public function toggleBlock(Request $request)
+    {
+        $user = Auth::user();
+        $contactId = $request->contact_id;
+
+        $blocked = BlockedContacts::where('user_id', $user->id)
+            ->where('contact_id', $contactId)
+            ->first();
+
+        if ($blocked) {
+            $blocked->delete();
+            $status = false;
+        } else {
+            BlockedContacts::create([
+                'user_id' => $user->id,
+                'contact_id' => $contactId,
+            ]);
+            $status = true;
+        }
+
+        return response()->json(['blocked' => $status]);
     }
 
 

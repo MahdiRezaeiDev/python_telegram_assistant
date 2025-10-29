@@ -14,9 +14,8 @@ return new class extends Migration
             $table->string('username', 255);
             $table->string('phone', 20);
             $table->string('api_bot_id', 255);
-            $table->boolean('is_blocked')->default(0);
             $table->string('profile_photo_path', 255)->nullable();
-            $table->timestamps(); // created_at & updated_at
+            $table->timestamps();
         });
     }
 
