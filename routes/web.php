@@ -41,7 +41,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/send-message', [TelegramController::class, 'sendMessage'])->name('sendMessage');
     });
 
-    Route::resource('contacts', ContactsController::class);
+    Route::post('contacts/get', [ContactsController::class, 'getContacts'])->name('contacts.get');
+    Route::resource('/contacts', ContactsController::class);
 });
 
 

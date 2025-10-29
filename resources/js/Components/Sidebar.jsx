@@ -1,7 +1,14 @@
 import Dropdown from '@/Components/Dropdown';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { usePage } from '@inertiajs/react';
-import { ChevronDown, LayoutDashboard, MenuIcon, User } from 'lucide-react';
+import {
+    ChevronDown,
+    Contact,
+    LayoutDashboard,
+    MenuIcon,
+    User,
+    Users,
+} from 'lucide-react';
 import { useRef } from 'react';
 import NavLink from './NavLink';
 
@@ -100,11 +107,11 @@ export default function Sidebar() {
                         </li>
                         <li>
                             <NavLink
-                                href={route('dashboard')}
-                                active={route().current('dashboard')}
+                                href={route('contacts.index')}
+                                active={route().current('contacts.*')}
                             >
                                 <div className="flex items-end gap-2">
-                                    <LayoutDashboard className="h-5 w-5" />
+                                    <Users className="h-5 w-5" />
                                     <span>مدیریت کاربران</span>
                                 </div>
                             </NavLink>
@@ -115,7 +122,7 @@ export default function Sidebar() {
                                 active={route().current('dashboard')}
                             >
                                 <div className="flex items-end gap-2">
-                                    <LayoutDashboard className="h-5 w-5" />
+                                    <Contact className="h-5 w-5" />
                                     <span>مخاطبین گروه</span>
                                 </div>
                             </NavLink>
