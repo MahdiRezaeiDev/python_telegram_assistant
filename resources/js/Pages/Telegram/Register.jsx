@@ -1,74 +1,139 @@
+import InputError from '@/Components/InputError';
+import InputLabel from '@/Components/InputLabel';
+import PrimaryButton from '@/Components/PrimaryButton';
+import TextInput from '@/Components/TextInput';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, router } from '@inertiajs/react';
-import { useState } from 'react';
+import { Head, router, useForm } from '@inertiajs/react';
+import { Toaster, toast } from 'sonner';
 
 export default function Login() {
-    const [phone, setPhone] = useState('+93728550025');
-    const [apiId, setApiId] = useState('28143353');
-    const [apiHash, setApiHash] = useState('e8a1d1e5589b927d470ef6dfa5d5b667');
-    const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState('');
+    const validatePhone = (number) => {
+        const regex = /^\+(98|93)[0-9]{8,12}$/; // +98 یا +93 و 8 تا 12 رقم
+        return regex.test(number);
+    };
+
+    const { data, setData, post, errors, processing } = useForm({
+        phone: '',
+        apiId: '',
+        apiHash: '',
+    });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
-        setMessage('');
 
-        const res = await axios.post(route('registerAccount'), {
-            phone,
-            api_id: apiId,
-            api_hash: apiHash,
+        // اعتبارسنجی شماره قبل از ارسال
+        // if (!validatePhone(data.phone)) {
+        //     toast.error('شماره وارد شده معتبر نیست!', {
+        //         description:
+        //             ' لطفاً با +98 یا +93 وارد کنید و فاصله میان اعداد را حذف نمایید.',
+        //         position: 'bottom-left',
+        //         duration: 3000,
+        //         style: {
+        //             backgroundColor: 'red',
+        //             fontFamily: 'Vazir',
+        //             color: 'white',
+        //             fontWeight: 'bold',
+        //         },
+        //     });
+        //     return;
+        // }
+
+        post(route('registerAccount'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                toast.success('عملیات موفقانه انجام شد.', {
+                    description:
+                        'درخواست ورود به حساب تلگرام شما موفقانه ثبت شد و کد تایید ارسال گردید.',
+                    position: 'bottom-left',
+                    duration: 3000,
+                    style: {
+                        backgroundColor: 'seagreen',
+                        fontFamily: 'Vazir',
+                        color: 'white',
+                        fontWeight: 'bold',
+                    },
+                });
+                localStorage.setItem('telegram_phone', phone);
+                router.visit(route('verifyPage'));
+            },
+            onError: () => {
+                toast.error('خطا در اجرای عملیات', {
+                    description: res.data.error || 'مشکل در ثبت درخواست',
+                    position: 'bottom-left',
+                    duration: 3000,
+                    style: {
+                        backgroundColor: 'red',
+                        fontFamily: 'Vazir',
+                        color: 'white',
+                        fontWeight: 'bold',
+                    },
+                });
+            },
         });
-
-        if (res.data.message) {
-            setMessage(res.data.message);
-            localStorage.setItem('telegram_phone', phone);
-            router.visit(route('verifyPage'));
-        } else {
-            setMessage(res.data.error || 'Error occurred');
-        }
-
-        setLoading(false);
     };
 
     return (
         <AuthenticatedLayout title="ورود به حساب تلگرام">
             <Head title="ورود به حساب تلگرام" />
-            <div className="mx-auto mt-20 max-w-md rounded-lg bg-white p-6 shadow-lg">
-                <h1 className="mb-4 text-xl font-bold">Telegram Login</h1>
-                <form onSubmit={handleSubmit}>
-                    <input
-                        type="text"
-                        placeholder="Phone"
-                        className="mb-2 w-full border p-2"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                    />
-                    <input
-                        type="text"
-                        placeholder="API ID"
-                        className="mb-2 w-full border p-2"
-                        value={apiId}
-                        onChange={(e) => setApiId(e.target.value)}
-                    />
-                    <input
-                        type="text"
-                        placeholder="API Hash"
-                        className="mb-4 w-full border p-2"
-                        value={apiHash}
-                        onChange={(e) => setApiHash(e.target.value)}
-                    />
+            <Toaster richColors />
 
-                    <button
-                        disabled={loading}
-                        className="w-full rounded bg-blue-500 px-4 py-2 text-white"
-                    >
-                        {loading ? 'Registering...' : 'Register'}
-                    </button>
-                </form>
-                {message && (
-                    <p className="mt-4 text-sm text-gray-700">{message}</p>
-                )}
+            <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+                <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-xl ring-1 ring-gray-200">
+                    <h1 className="mb-3 text-center text-2xl font-bold text-gray-800">
+                        ورود به تلگرام
+                    </h1>
+                    <p className="mb-6 text-center text-xs text-gray-500">
+                        لطفاً اطلاعات حساب تلگرام خود را وارد کنید
+                    </p>
+
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div>
+                            <InputLabel value="شماره تلفن" />
+                            <TextInput
+                                placeholder="+98 7XX XXX XXX"
+                                value={data.phone}
+                                onChange={(e) =>
+                                    setData('phone', e.target.value)
+                                }
+                                className="w-full"
+                            />
+                            <InputError message={errors.phone} />
+                        </div>
+
+                        <div>
+                            <InputLabel value="API ID" />
+                            <TextInput
+                                placeholder="123456"
+                                value={data.apiId}
+                                onChange={(e) =>
+                                    setData('apiId', e.target.value)
+                                }
+                                className="w-full"
+                            />
+                            <InputError message={errors.apiId} />
+                        </div>
+
+                        <div>
+                            <InputLabel value="API Hash" />
+                            <TextInput
+                                placeholder="############"
+                                value={data.apiHash}
+                                onChange={(e) =>
+                                    setData('apiHash', e.target.value)
+                                }
+                                className="w-full"
+                            />
+                            <InputError message={errors.apiHash} />
+                        </div>
+
+                        <PrimaryButton
+                            disabled={processing}
+                            className="flex w-full justify-center text-center"
+                        >
+                            {processing ? 'در حال ثبت...' : 'ثبت حساب'}
+                        </PrimaryButton>
+                    </form>
+                </div>
             </div>
         </AuthenticatedLayout>
     );

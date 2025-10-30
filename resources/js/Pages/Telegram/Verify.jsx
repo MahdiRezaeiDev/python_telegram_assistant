@@ -2,10 +2,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, router } from '@inertiajs/react';
 import axios from 'axios';
 import { useState } from 'react';
+import { Toaster, toast } from 'sonner';
 
 export default function Verify() {
     const [code, setCode] = useState('');
-    const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
 
     const phone = localStorage.getItem('telegram_phone');
@@ -13,7 +13,6 @@ export default function Verify() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setMessage('');
 
         try {
             const res = await axios.post(route('verifyAccount'), {
@@ -24,42 +23,62 @@ export default function Verify() {
             if (res.data.two_factor_required) {
                 router.visit(route('passwordPage')); // فرم رمز دوم
             } else if (res.data?.message) {
-                setMessage('✅ Login Successful!');
+                toast.success('ورود با موفقیت انجام شد!', {
+                    position: 'bottom-left',
+                    duration: 3000,
+                });
             } else {
-                setMessage(res.data.error || 'Error occurred');
+                toast.error(res.data.error || 'خطا رخ داد!', {
+                    position: 'bottom-left',
+                    duration: 3000,
+                });
             }
         } catch (err) {
-            setMessage(err.response?.data?.error || 'Error occurred');
+            toast.error(err.response?.data?.error || 'خطا در اتصال به سرور!', {
+                position: 'bottom-left',
+                duration: 3000,
+            });
         }
 
         setLoading(false);
     };
 
     return (
-        <AuthenticatedLayout title="کد تایید ورود">
-            <Head title="کد تایید ورود" />
-            <div className="mx-auto mt-20 max-w-md rounded-lg bg-white p-6 shadow-lg">
-                <h1 className="mb-4 text-xl font-bold">
-                    Enter Verification Code
-                </h1>
-                <form onSubmit={handleSubmit}>
-                    <input
-                        type="text"
-                        placeholder="Code"
-                        className="mb-4 w-full border p-2"
-                        value={code}
-                        onChange={(e) => setCode(e.target.value)}
-                    />
-                    <button
-                        disabled={loading}
-                        className="w-full rounded bg-green-500 px-4 py-2 text-white"
-                    >
-                        {loading ? 'Verifying...' : 'Verify'}
-                    </button>
-                </form>
-                {message && (
-                    <p className="mt-4 text-sm text-gray-700">{message}</p>
-                )}
+        <AuthenticatedLayout title="تایید کد ورود">
+            <Head title="تایید کد ورود" />
+            <Toaster richColors />
+
+            <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+                <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-xl ring-1 ring-gray-200">
+                    <h1 className="mb-6 text-center text-2xl font-bold text-gray-800">
+                        تایید کد ورود
+                    </h1>
+                    <p className="mb-6 text-center text-xs text-gray-500">
+                        لطفاً کد تایید ارسال شده به شماره {phone} را وارد کنید
+                    </p>
+
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div>
+                            <label className="mb-1 block text-sm font-medium text-gray-700">
+                                کد تایید
+                            </label>
+                            <input
+                                type="text"
+                                placeholder="کد را وارد کنید"
+                                className="w-full rounded-md border border-gray-300 p-3 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                                value={code}
+                                onChange={(e) => setCode(e.target.value)}
+                            />
+                        </div>
+
+                        <button
+                            disabled={loading}
+                            className="w-full rounded-lg bg-green-500 px-4 py-3 font-semibold text-white transition hover:bg-green-600 disabled:cursor-not-allowed disabled:opacity-70"
+                        >
+                            {loading ? 'در حال بررسی...' : 'تایید'}
+                        </button>
+                    </form>
+                </div>
             </div>
         </AuthenticatedLayout>
     );
