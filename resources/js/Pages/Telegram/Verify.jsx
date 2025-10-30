@@ -1,46 +1,43 @@
+import InputError from '@/Components/InputError';
+import InputLabel from '@/Components/InputLabel';
+import PrimaryButton from '@/Components/PrimaryButton';
+import TextInput from '@/Components/TextInput';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, router } from '@inertiajs/react';
-import axios from 'axios';
-import { useState } from 'react';
+import { Head, router, useForm } from '@inertiajs/react';
 import { Toaster, toast } from 'sonner';
 
 export default function Verify() {
-    const [code, setCode] = useState('');
-    const [loading, setLoading] = useState(false);
+    const { data, setData, post, errors, processing } = useForm({
+        code: '',
+    });
 
     const phone = localStorage.getItem('telegram_phone');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
 
-        try {
-            const res = await axios.post(route('verifyAccount'), {
-                phone,
-                code,
-            });
-
-            if (res.data.two_factor_required) {
-                router.visit(route('passwordPage')); // فرم رمز دوم
-            } else if (res.data?.message) {
-                toast.success('ورود با موفقیت انجام شد!', {
-                    position: 'bottom-left',
-                    duration: 3000,
-                });
-            } else {
-                toast.error(res.data.error || 'خطا رخ داد!', {
-                    position: 'bottom-left',
-                    duration: 3000,
-                });
-            }
-        } catch (err) {
-            toast.error(err.response?.data?.error || 'خطا در اتصال به سرور!', {
-                position: 'bottom-left',
-                duration: 3000,
-            });
-        }
-
-        setLoading(false);
+        post(route('verifyAccount'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                if (res.data.two_factor_required) {
+                    router.visit(route('passwordPage'));
+                } else if (res.data?.message) {
+                    toast.success('ورود با موفقیت انجام شد!', {
+                        position: 'bottom-left',
+                        duration: 3000,
+                    });
+                }
+            },
+            onError: () => {
+                toast.error(
+                    err.response?.data?.error || 'خطا در اتصال به سرور!',
+                    {
+                        position: 'bottom-left',
+                        duration: 3000,
+                    },
+                );
+            },
+        });
     };
 
     return (
@@ -59,24 +56,24 @@ export default function Verify() {
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <label className="mb-1 block text-sm font-medium text-gray-700">
-                                کد تایید
-                            </label>
-                            <input
-                                type="text"
+                            <InputLabel message="کد تایید" />
+                            <TextInput
                                 placeholder="کد را وارد کنید"
-                                className="w-full rounded-md border border-gray-300 p-3 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                                value={code}
-                                onChange={(e) => setCode(e.target.value)}
+                                value={data.code}
+                                onChange={(e) =>
+                                    setData('code', e.target.value)
+                                }
+                                className="w-full"
                             />
+                            <InputError message={errors.code} />
                         </div>
 
-                        <button
-                            disabled={loading}
-                            className="w-full rounded-lg bg-green-500 px-4 py-3 font-semibold text-white transition hover:bg-green-600 disabled:cursor-not-allowed disabled:opacity-70"
+                        <PrimaryButton
+                            className="flex w-full justify-center"
+                            disabled={processing}
                         >
-                            {loading ? 'در حال بررسی...' : 'تایید'}
-                        </button>
+                            {processing ? 'در حال بررسی...' : 'تایید'}
+                        </PrimaryButton>
                     </form>
                 </div>
             </div>

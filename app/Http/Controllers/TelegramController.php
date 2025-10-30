@@ -46,21 +46,30 @@ class TelegramController extends Controller
 
     public function register(Request $request)
     {
-        $validated = $request->validate([
-            'phone' => 'required|string',
-            'api_id' => 'required|integer',
-            'api_hash' => 'required|string',
+        $request->validate([
+            'phone' => ['required', 'string', 'regex:/^\+(98|93)[0-9]{8,12}$/'],
+            'apiId' => ['required', 'integer'],
+            'apiHash' => ['required', 'string'],
+        ], [
+            'phone.required' => 'شماره تلفن الزامی است.',
+            'phone.string' => 'شماره تلفن باید رشته‌ای معتبر باشد.',
+            'phone.regex' => 'شماره تلفن باید با +98 یا +93 شروع شود و فقط شامل اعداد انگلیسی باشد.',
+            'apiId.required' => 'API ID الزامی است.',
+            'apiId.integer' => 'API ID باید عدد صحیح باشد.',
+            'apiHash.required' => 'API Hash الزامی است.',
+            'apiHash.string' => 'API Hash باید رشته‌ای معتبر باشد.',
         ]);
 
         $response = Http::post('http://127.0.0.1:5000/api/telegram/register', [
             'phone' => $request->phone,
             'apiId' => $request->api_id,
             'apiHash' => $request->api_hash,
-            'user_id' => Auth::id()
+            'user_id' => Auth::id(),
         ]);
 
         return $response->json();
     }
+
 
     public function verify()
     {

@@ -22,21 +22,21 @@ export default function Login() {
         e.preventDefault();
 
         // اعتبارسنجی شماره قبل از ارسال
-        // if (!validatePhone(data.phone)) {
-        //     toast.error('شماره وارد شده معتبر نیست!', {
-        //         description:
-        //             ' لطفاً با +98 یا +93 وارد کنید و فاصله میان اعداد را حذف نمایید.',
-        //         position: 'bottom-left',
-        //         duration: 3000,
-        //         style: {
-        //             backgroundColor: 'red',
-        //             fontFamily: 'Vazir',
-        //             color: 'white',
-        //             fontWeight: 'bold',
-        //         },
-        //     });
-        //     return;
-        // }
+        if (!validatePhone(data.phone)) {
+            toast.error('شماره وارد شده معتبر نیست!', {
+                description:
+                    ' لطفاً با +98 یا +93 وارد کنید و فاصله میان اعداد را حذف نمایید.',
+                position: 'bottom-left',
+                duration: 3000,
+                style: {
+                    backgroundColor: 'red',
+                    fontFamily: 'Vazir',
+                    color: 'white',
+                    fontWeight: 'bold',
+                },
+            });
+            return;
+        }
 
         post(route('registerAccount'), {
             preserveScroll: true,
