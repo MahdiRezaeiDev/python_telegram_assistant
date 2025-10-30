@@ -5,6 +5,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { Edit, Trash } from 'lucide-react';
 import { useState } from 'react';
+import { toast, Toaster } from 'sonner';
 
 export default function Index({ users }) {
     const [selectedUser, setSelectedUser] = useState(0);
@@ -20,7 +21,20 @@ export default function Index({ users }) {
         e.preventDefault();
         destroy(route('users.destroy', selectedUser), {
             preserveScroll: true,
-            onSuccess: () => closeModal(),
+            onSuccess: () => {
+                closeModal();
+                toast.success('عملیات موفقانه انجام شد.', {
+                    description: 'اطلاعات کاربر با موفقیت به‌روزرسانی شد.',
+                    position: 'bottom-left',
+                    duration: 4000,
+                    style: {
+                        backgroundColor: 'red',
+                        fontFamily: 'Vazir',
+                        color: 'white',
+                        fontWeight: 'bold',
+                    },
+                });
+            },
             onError: () => console.log(errors),
             onFinish: () => reset(),
         });
@@ -33,6 +47,8 @@ export default function Index({ users }) {
     return (
         <AuthenticatedLayout title="لیست مخاطبین">
             <Head title="لیست مخاطبین" />
+            {/* 🔔 Sonner Toaster */}
+            <Toaster richColors />
 
             <div className="flex flex-wrap pt-8">
                 <div className="mb-12 w-full px-4">
@@ -78,7 +94,7 @@ export default function Index({ users }) {
                                             شناسه یکتا
                                         </th>
                                         <th className="px-6 py-3 text-right text-sm">
-                                            بلاک
+                                            عملیات
                                         </th>
                                     </tr>
                                 </thead>

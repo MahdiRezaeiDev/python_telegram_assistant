@@ -29,9 +29,9 @@ export default function Edit({ user }) {
                 toast.success('عملیات موفقانه انجام شد.', {
                     description: 'اطلاعات کاربر با موفقیت به‌روزرسانی شد.',
                     position: 'bottom-left',
-                    duration: 2000,
+                    duration: 4000,
                     style: {
-                        backgroundColor: 'rgb(31, 41, 55)',
+                        backgroundColor: 'seagreen',
                         fontFamily: 'Vazir',
                         color: 'white',
                         fontWeight: 'bold',
@@ -146,10 +146,10 @@ export default function Edit({ user }) {
                     </div>
 
                     {/* Submit Button */}
-                    <div className="col-span-1 flex justify-end pt-2 md:col-span-2">
+                    <div className="col-span-1 flex justify-start pt-2 md:col-span-2">
                         <PrimaryButton
                             disabled={processing}
-                            className="rounded-lg bg-indigo-600 px-6 py-2 font-medium text-white transition hover:bg-indigo-700"
+                            className="rounded px-6 py-2 font-medium text-white transition"
                         >
                             {processing
                                 ? 'در حال ذخیره...'

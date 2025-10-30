@@ -3,7 +3,7 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { useRef } from 'react';
 import { Toaster, toast } from 'sonner';
 
@@ -29,9 +29,9 @@ export default function Create() {
                 toast.success('عملیات موفقانه انجام شد.', {
                     description: 'کاربر مد نظر با موفقیت ایجاد گردید.',
                     position: 'bottom-left',
-                    duration: 2000,
+                    duration: 4000,
                     style: {
-                        backgroundColor: 'rgb(31, 41, 55)',
+                        backgroundColor: 'seagreen',
                         fontFamily: 'Vazir',
                         color: 'white',
                         fontWeight: 'bold',
@@ -58,7 +58,7 @@ export default function Create() {
             {/* 🔔 Sonner Toaster */}
             <Toaster richColors />
 
-            <div className="mx-auto mt-16 max-w-3xl rounded-2xl bg-white shadow-lg ring-1 ring-gray-100 transition hover:shadow-2xl">
+            <div className="mx-auto mt-16 max-w-3xl rounded-2xl bg-white shadow-md ring-1 ring-gray-100 transition hover:shadow-lg">
                 <div className="border-b border-gray-100 px-8 py-5">
                     <h2 className="text-2xl font-semibold text-gray-800">
                         ایجاد حساب کاربری جدید
@@ -143,13 +143,19 @@ export default function Create() {
                     </div>
 
                     {/* Submit Button */}
-                    <div className="col-span-1 flex justify-end pt-2 md:col-span-2">
+                    <div className="col-span-1 flex justify-start gap-2 pt-2 md:col-span-2">
                         <PrimaryButton
                             disabled={processing}
-                            className="rounded-lg bg-indigo-600 px-6 py-2 font-medium text-white transition hover:bg-indigo-700"
+                            className="rounded px-6 py-2 font-medium text-white transition"
                         >
                             {processing ? 'در حال ذخیره...' : 'ذخیره کاربر'}
                         </PrimaryButton>
+                        <Link
+                            href={route('users.index')}
+                            className="border-blueGray-300 text-blueGray-600 hover:bg-blueGray-50 rounded border px-4 py-2 text-xs font-semibold transition"
+                        >
+                            بازگشت
+                        </Link>
                     </div>
                 </form>
             </div>
