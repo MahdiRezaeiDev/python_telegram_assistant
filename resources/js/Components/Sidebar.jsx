@@ -107,8 +107,8 @@ export default function Sidebar() {
                         </li>
                         <li>
                             <NavLink
-                                href={route('contacts.index')}
-                                active={route().current('contacts.*')}
+                                href={route('users.index')}
+                                active={route().current('users.*')}
                             >
                                 <div className="flex items-end gap-2">
                                     <Users className="h-5 w-5" />
@@ -118,8 +118,8 @@ export default function Sidebar() {
                         </li>
                         <li>
                             <NavLink
-                                href={route('dashboard')}
-                                active={route().current('dashboard')}
+                                href={route('contacts.index')}
+                                active={route().current('contacts.*')}
                             >
                                 <div className="flex items-end gap-2">
                                     <Contact className="h-5 w-5" />
