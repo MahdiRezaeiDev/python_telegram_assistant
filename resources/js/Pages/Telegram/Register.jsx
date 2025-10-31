@@ -1,28 +1,28 @@
-import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, router, useForm } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
+import axios from 'axios';
+import { useState } from 'react';
 import { Toaster, toast } from 'sonner';
 
 export default function Login() {
+    const [phone, setPhone] = useState('');
+    const [apiId, setApiId] = useState('');
+    const [apiHash, setApiHash] = useState('');
+    const [loading, setLoading] = useState(false);
+
     const validatePhone = (number) => {
         const regex = /^\+(98|93)[0-9]{8,12}$/; // +98 یا +93 و 8 تا 12 رقم
         return regex.test(number);
     };
 
-    const { data, setData, post, errors, processing } = useForm({
-        phone: '',
-        apiId: '',
-        apiHash: '',
-    });
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         // اعتبارسنجی شماره قبل از ارسال
-        if (!validatePhone(data.phone)) {
+        if (!validatePhone(phone)) {
             toast.error('شماره وارد شده معتبر نیست!', {
                 description:
                     ' لطفاً با +98 یا +93 وارد کنید و فاصله میان اعداد را حذف نمایید.',
@@ -38,9 +38,16 @@ export default function Login() {
             return;
         }
 
-        post(route('registerAccount'), {
-            preserveScroll: true,
-            onSuccess: () => {
+        setLoading(true);
+
+        try {
+            const res = await axios.post(route('registerAccount'), {
+                phone,
+                apiId: apiId,
+                apiHash: apiHash,
+            });
+
+            if (res.data.message) {
                 toast.success('عملیات موفقانه انجام شد.', {
                     description:
                         'درخواست ورود به حساب تلگرام شما موفقانه ثبت شد و کد تایید ارسال گردید.',
@@ -55,8 +62,7 @@ export default function Login() {
                 });
                 localStorage.setItem('telegram_phone', phone);
                 router.visit(route('verifyPage'));
-            },
-            onError: () => {
+            } else {
                 toast.error('خطا در اجرای عملیات', {
                     description: res.data.error || 'مشکل در ثبت درخواست',
                     position: 'bottom-left',
@@ -68,8 +74,23 @@ export default function Login() {
                         fontWeight: 'bold',
                     },
                 });
-            },
-        });
+            }
+        } catch (error) {
+            toast.error('خطا در اتصال به سرور', {
+                description:
+                    'لطفاً اتصال اینترنت خود را بررسی کرده و دوباره تلاش کنید.',
+                position: 'bottom-left',
+                duration: 3000,
+                style: {
+                    backgroundColor: 'red',
+                    fontFamily: 'Vazir',
+                    color: 'white',
+                    fontWeight: 'bold',
+                },
+            });
+        }
+
+        setLoading(false);
     };
 
     return (
@@ -90,47 +111,38 @@ export default function Login() {
                         <div>
                             <InputLabel value="شماره تلفن" />
                             <TextInput
-                                placeholder="+98 7XX XXX XXX"
-                                value={data.phone}
-                                onChange={(e) =>
-                                    setData('phone', e.target.value)
-                                }
-                                className="w-full"
+                                placeholder="+987XXXXXXXX"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                                className="w-full text-sm"
                             />
-                            <InputError message={errors.phone} />
                         </div>
 
                         <div>
                             <InputLabel value="API ID" />
                             <TextInput
-                                placeholder="123456"
-                                value={data.apiId}
-                                onChange={(e) =>
-                                    setData('apiId', e.target.value)
-                                }
-                                className="w-full"
+                                placeholder="API ID خود را وارد کنید"
+                                value={apiId}
+                                onChange={(e) => setApiId(e.target.value)}
+                                className="w-full text-sm"
                             />
-                            <InputError message={errors.apiId} />
                         </div>
 
                         <div>
                             <InputLabel value="API Hash" />
                             <TextInput
-                                placeholder="############"
-                                value={data.apiHash}
-                                onChange={(e) =>
-                                    setData('apiHash', e.target.value)
-                                }
-                                className="w-full"
+                                placeholder="API Hash خود را وارد کنید"
+                                value={apiHash}
+                                onChange={(e) => setApiHash(e.target.value)}
+                                className="w-full text-sm"
                             />
-                            <InputError message={errors.apiHash} />
                         </div>
 
                         <PrimaryButton
-                            disabled={processing}
-                            className="flex w-full justify-center text-center"
+                            className="flex w-full justify-center"
+                            disabled={loading}
                         >
-                            {processing ? 'در حال ثبت...' : 'ثبت حساب'}
+                            {loading ? 'در حال ثبت...' : 'ثبت حساب'}
                         </PrimaryButton>
                     </form>
                 </div>

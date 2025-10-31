@@ -1,10 +1,11 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, router } from '@inertiajs/react';
+import axios from 'axios';
 import { useState } from 'react';
+import { Toaster, toast } from 'sonner';
 
 export default function Password() {
     const [password, setPassword] = useState('');
-    const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
 
     const phone = localStorage.getItem('telegram_phone');
@@ -12,19 +13,30 @@ export default function Password() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setMessage('');
 
-        const res = await axios.post(route('verifyAccountPassword'), {
-            phone,
-            password,
-        });
+        try {
+            const res = await axios.post(route('verifyAccountPassword'), {
+                phone,
+                password,
+            });
 
-        if (res.data.message) {
-            setMessage('✅ Login Successful!');
-            4;
-            router.visit(route('myAccount'));
-        } else {
-            setMessage(res.data.error || 'Error occurred');
+            if (res.data.message) {
+                toast.success('ورود با موفقیت انجام شد!', {
+                    position: 'top-center',
+                    duration: 3000,
+                });
+                router.visit(route('myAccount'));
+            } else {
+                toast.error(res.data.error || 'خطا رخ داد!', {
+                    position: 'top-center',
+                    duration: 3000,
+                });
+            }
+        } catch (err) {
+            toast.error(err.response?.data?.error || 'خطا در اتصال به سرور!', {
+                position: 'top-center',
+                duration: 3000,
+            });
         }
 
         setLoading(false);
@@ -33,27 +45,39 @@ export default function Password() {
     return (
         <AuthenticatedLayout title="رمز دوم حساب تلگرام">
             <Head title="رمز دوم حساب تلگرام" />
-            <div className="mx-auto mt-20 max-w-md rounded-lg bg-white p-6 shadow-lg">
-                <h1 className="mb-4 text-xl font-bold">Enter 2FA Password</h1>
-                <form onSubmit={handleSubmit}>
-                    <input
-                        type="password"
-                        placeholder="Telegram Password"
-                        className="mb-4 w-full border p-2"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
+            <Toaster richColors />
 
-                    <button
-                        disabled={loading}
-                        className="w-full rounded bg-blue-600 px-4 py-2 text-white"
-                    >
-                        {loading ? 'Verifying...' : 'Verify Password'}
-                    </button>
-                </form>
-                {message && (
-                    <p className="mt-4 text-sm text-gray-700">{message}</p>
-                )}
+            <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+                <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-xl ring-1 ring-gray-200">
+                    <h1 className="mb-6 text-center text-2xl font-bold text-gray-800">
+                        وارد کردن رمز دوم (2FA)
+                    </h1>
+                    <p className="mb-6 text-center text-gray-500">
+                        لطفاً رمز دوم تلگرام خود را وارد کنید
+                    </p>
+
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div>
+                            <label className="mb-1 block text-sm font-medium text-gray-700">
+                                رمز دوم
+                            </label>
+                            <input
+                                type="password"
+                                placeholder="رمز دوم تلگرام"
+                                className="w-full rounded-md border border-gray-300 p-3 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </div>
+
+                        <button
+                            disabled={loading}
+                            className="w-full rounded-lg bg-indigo-600 px-4 py-3 font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-70"
+                        >
+                            {loading ? 'در حال بررسی...' : 'تایید رمز'}
+                        </button>
+                    </form>
+                </div>
             </div>
         </AuthenticatedLayout>
     );

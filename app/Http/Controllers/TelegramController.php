@@ -62,8 +62,8 @@ class TelegramController extends Controller
 
         $response = Http::post('http://127.0.0.1:5000/api/telegram/register', [
             'phone' => $request->phone,
-            'apiId' => $request->api_id,
-            'apiHash' => $request->api_hash,
+            'apiId' => $request->apiId,
+            'apiHash' => $request->apiHash,
             'user_id' => Auth::id(),
         ]);
 
@@ -79,8 +79,16 @@ class TelegramController extends Controller
     public function verifyCode(Request $request)
     {
         $request->validate([
-            'phone' => 'required|string',
-            'code' => 'required|string'
+            'phone' => ['required', 'string', 'regex:/^\+(98|93)[0-9]{8,12}$/'],
+            'code' => ['required', 'string', 'min:4', 'max:8'],
+        ], [
+            'phone.required' => 'شماره تلفن الزامی است.',
+            'phone.string' => 'شماره تلفن باید رشته‌ای معتبر باشد.',
+            'phone.regex' => 'شماره تلفن باید با +98 یا +93 شروع شود و فقط شامل اعداد انگلیسی باشد.',
+            'code.required' => 'کد تایید الزامی است.',
+            'code.string' => 'کد تایید باید رشته‌ای معتبر باشد.',
+            'code.min' => 'کد تایید حداقل ۴ رقم باید باشد.',
+            'code.max' => 'کد تایید نمی‌تواند بیش از ۸ رقم باشد.',
         ]);
 
         $response = Http::post('http://127.0.0.1:5000/api/telegram/verify', [
@@ -90,6 +98,7 @@ class TelegramController extends Controller
 
         return $response->json();
     }
+
 
     public function password()
     {
