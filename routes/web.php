@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('telegram')->group(function () {
         Route::get('/me', [TelegramController::class, 'me'])->name('myAccount');
+        Route::post('/disconnect', [TelegramController::class, 'disconnect'])->name('disconnect');
         Route::get('/myGroups', [TelegramController::class, 'myGroups'])->name('myGroups');
 
 

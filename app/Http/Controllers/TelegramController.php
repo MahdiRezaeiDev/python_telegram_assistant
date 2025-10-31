@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TelegramAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -22,6 +23,26 @@ class TelegramController extends Controller
         ]);
 
         return $response->json();
+    }
+
+    public function disconnect()
+    {
+        $account = TelegramAccount::where('user_id', Auth::id())->first();
+
+        if (!$account) {
+            return redirect()->back()->with([
+                'status' => 'error',
+                'message' => 'هیچ حساب تلگرامی برای کاربر فعلی یافت نشد.',
+            ]);
+        }
+
+        $account->is_logged_in = 0;
+        $account->save();
+
+        return redirect()->back()->with([
+            'status' => 'success',
+            'message' => 'اتصال حساب تلگرام شما با موفقیت قطع گردید.',
+        ]);
     }
 
     public function myGroups()
