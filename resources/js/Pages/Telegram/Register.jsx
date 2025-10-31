@@ -2,15 +2,16 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, router } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { useState } from 'react';
 import { Toaster, toast } from 'sonner';
 
 export default function Login() {
-    const [phone, setPhone] = useState('');
-    const [apiId, setApiId] = useState('');
-    const [apiHash, setApiHash] = useState('');
+    const account = usePage().props.auth.user?.account;
+    const [phone, setPhone] = useState(account?.phone ?? '');
+    const [apiId, setApiId] = useState(account?.api_id ?? '');
+    const [apiHash, setApiHash] = useState(account?.api_hash ?? '');
     const [loading, setLoading] = useState(false);
 
     const validatePhone = (number) => {
