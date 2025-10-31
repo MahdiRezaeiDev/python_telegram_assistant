@@ -21,9 +21,9 @@ class Product extends Model
     ];
 
     /**
-     * Relashionship: Product has many similar codes
+     * Relationship: Product has many similar codes
      */
-    public function similars()
+    public function simillars()
     {
         return $this->hasMany(SimilarProduct::class, 'product_id');
     }

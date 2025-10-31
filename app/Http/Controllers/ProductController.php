@@ -15,10 +15,27 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Inertia::render('Products/Upload');
+        $query = Product::with('simillars')->orderBy('id', 'desc');
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('code', 'like', "%$search%")
+                    ->orWhere('brand', 'like', "%$search%")
+                    ->orWhere('description', 'like', "%$search%");
+            });
+        }
+
+        $products = $query->paginate(20)->withQueryString();
+
+        return Inertia::render('Products/Index', [
+            'products' => $products,
+            'filters' => $request->only('search'),
+        ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
