@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->string('name');
+            $table->string('code');
             $table->integer('price')->default(0);
             $table->string('brand', 30)->nullable();
             $table->boolean('is_bot_allowed')->default(true);
@@ -28,4 +28,3 @@ return new class extends Migration {
         Schema::dropIfExists('products');
     }
 };
-s

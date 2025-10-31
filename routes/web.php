@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ContactsController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\UserController;
@@ -50,6 +51,10 @@ Route::middleware('auth')->group(function () {
     Route::post('contacts/get', [ContactsController::class, 'getContacts'])->name('contacts.get');
     Route::post('/contacts/toggle-block', [ContactsController::class, 'toggleBlock'])->name('contacts.toggleBlock');
     Route::resource('/contacts', ContactsController::class);
+
+
+    // Products Related controllers
+    Route::resource('/products', ProductController::class);
 });
 
 

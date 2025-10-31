@@ -129,8 +129,8 @@ export default function Sidebar() {
                         </li>
                         <li>
                             <NavLink
-                                href={route('myAccount')}
-                                active={route().current('myAccount')}
+                                href={route('products.index')}
+                                active={route().current('products.index')}
                             >
                                 <div className="flex items-end gap-2">
                                     <LayoutDashboard className="h-5 w-5" />
