@@ -1,3 +1,4 @@
+import DangerButton from '@/Components/DangerButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, router, usePage } from '@inertiajs/react';
 import axios from 'axios';
@@ -126,12 +127,12 @@ export default function MyAccount() {
                                 {me.phone}
                             </p>
 
-                            <button
+                            <DangerButton
                                 onClick={handleDisconnect}
-                                className="mt-6 w-full rounded-lg bg-red-500 py-2 text-sm font-medium text-white transition hover:bg-red-600"
+                                className="mt-6 flex w-full justify-center rounded-lg bg-red-500 py-2 text-sm font-medium text-white transition hover:bg-red-600"
                             >
                                 قطع اتصال حساب
-                            </button>
+                            </DangerButton>
                         </div>
                     )}
                 </div>
