@@ -17,7 +17,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Product::with('simillars')->orderBy('id', 'desc');
+        $query = Product::with('simillars')->where('user_id', Auth::id())->orderBy('id', 'desc');
 
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
@@ -130,12 +130,28 @@ class ProductController extends Controller
         //
     }
 
+
+    public function fieldUpdate(Request $request, Product $product)
+    {
+        $product[$request->field] = $request->value;
+        $product->save();
+
+        return redirect()->back()->with([
+            'status' => 'success',
+            'message' => 'مشخصه مدنظر شما با موفقیت ویرایش گردید.'
+        ]);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Product $product)
     {
-        //
+        $product->delete();
+        return redirect()->back()->with([
+            'status' => 'success',
+            'message' => 'کاربر با موفقیت حذف شد.'
+        ]);
     }
 
 

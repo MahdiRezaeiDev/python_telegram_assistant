@@ -28,7 +28,7 @@ export default function Index({ users }) {
                     position: 'bottom-left',
                     duration: 4000,
                     style: {
-                        backgroundColor: 'red',
+                        backgroundColor: 'seagreen',
                         fontFamily: 'Vazir',
                         color: 'white',
                         fontWeight: 'bold',

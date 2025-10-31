@@ -54,6 +54,7 @@ Route::middleware('auth')->group(function () {
 
 
     // Products Related controllers
+    Route::post('/products/{product}/field', [ProductController::class, 'fieldUpdate'])->name('field.update');
     Route::resource('/products', ProductController::class);
 });
 
