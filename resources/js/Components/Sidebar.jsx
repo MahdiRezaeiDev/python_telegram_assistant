@@ -44,7 +44,7 @@ export default function Sidebar() {
                     className="text-blueGray-800 inline-block px-5 text-lg font-bold md:block md:pb-2"
                     href={route('dashboard')}
                 >
-                    کلینیک مادر و طفل
+                    گروه چراغ برق
                 </a>
 
                 {/* Mobile user dropdown */}
@@ -134,7 +134,7 @@ export default function Sidebar() {
                             >
                                 <div className="flex items-end gap-2">
                                     <LayoutDashboard className="h-5 w-5" />
-                                    <span>حساب کاربری شما</span>
+                                    <span>لیست کد های فنی</span>
                                 </div>
                             </NavLink>
                         </li>

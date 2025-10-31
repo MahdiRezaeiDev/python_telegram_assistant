@@ -38,8 +38,12 @@ export default function Nav({ title }) {
                         </Dropdown.Trigger>
                         <Dropdown.Content>
                             <div className="flex w-full items-center justify-between whitespace-nowrap bg-teal-700 p-4 font-normal text-white">
-                                <p className="text-xs">حساب کاربری:</p>
-                                <p className="text-xs">{user.name}</p>
+                                <p className="text-xs font-semibold">
+                                    حساب کاربری:
+                                </p>
+                                <p className="text-xs font-semibold">
+                                    {user.name}
+                                </p>
                             </div>
                             <ResponsiveNavLink
                                 href={route('profile.edit')}
@@ -47,6 +51,13 @@ export default function Nav({ title }) {
                                 className="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-teal-700"
                             >
                                 پروفایل کاربری
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink
+                                href={route('myAccount')}
+                                active={route().current('myAccount')}
+                                className="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-teal-700"
+                            >
+                                حساب تلگرام
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 method="post"
