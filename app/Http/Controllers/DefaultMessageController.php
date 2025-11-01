@@ -2,63 +2,48 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DefaultMessage;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class DefaultMessageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
+    // صفحه را برمی‌گرداند (Inertia) با دادهٔ فعلی
     public function create()
     {
-        //
+        $reply = DefaultMessage::first(); // تنها یک ردیف فرض می‌کنیم
+        return Inertia::render('Messages/Index', [
+            'defaultReply' => $reply ? $reply->content : null,
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // ذخیره (ایجاد یا به‌روزرسانی) — فقط یک پیام
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'content' => 'nullable|string|max:2000',
+        ]);
+
+        $reply = DefaultMessage::first();
+
+        if ($reply) {
+            $reply->update(['content' => $validated['content']]);
+        } else {
+            DefaultMessage::create(['content' => $validated['content']]);
+        }
+
+        return redirect()->back()->with('success', 'پیام پیش‌فرض ذخیره شد.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    // حذف (پاک کردن متن، ردیف می‌ماند اما content = null)
+    public function destroy()
     {
-        //
-    }
+        $reply = DefaultMessage::first();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+        if ($reply) {
+            $reply->update(['content' => null]);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()->back()->with('success', 'پیام پیش‌فرض حذف شد.');
     }
 }

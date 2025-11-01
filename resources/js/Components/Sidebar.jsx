@@ -6,6 +6,7 @@ import {
     Contact,
     LayoutDashboard,
     MenuIcon,
+    MessageSquareCode,
     User,
     Users,
 } from 'lucide-react';
@@ -144,7 +145,7 @@ export default function Sidebar() {
                                 active={route().current('messages.create')}
                             >
                                 <div className="flex items-end gap-2">
-                                    <LayoutDashboard className="h-5 w-5" />
+                                    <MessageSquareCode className="h-5 w-5" />
                                     <span>متن پیام ربات</span>
                                 </div>
                             </NavLink>
