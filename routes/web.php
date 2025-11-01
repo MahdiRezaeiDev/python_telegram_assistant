@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ContactsController;
+use App\Http\Controllers\DefaultMessageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TelegramController;
@@ -26,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 
+    // Telegram connection and information related routes
     Route::prefix('telegram')->group(function () {
         Route::get('/me', [TelegramController::class, 'me'])->name('myAccount');
         Route::post('/disconnect', [TelegramController::class, 'disconnect'])->name('disconnect');
@@ -48,6 +50,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/send-message', [TelegramController::class, 'sendMessage'])->name('sendMessage');
     });
 
+    // Group contacts related routes
     Route::post('contacts/get', [ContactsController::class, 'getContacts'])->name('contacts.get');
     Route::post('/contacts/toggle-block', [ContactsController::class, 'toggleBlock'])->name('contacts.toggleBlock');
     Route::resource('/contacts', ContactsController::class);
@@ -56,6 +59,9 @@ Route::middleware('auth')->group(function () {
     // Products Related controllers
     Route::post('/products/{product}/field', [ProductController::class, 'fieldUpdate'])->name('field.update');
     Route::resource('/products', ProductController::class)->except('show');
+
+    // Robot Default message Routes
+    Route::resource('/default/messages', DefaultMessageController::class)->except(['index', 'show', 'edit']);
 });
 
 

@@ -138,6 +138,17 @@ export default function Sidebar() {
                                 </div>
                             </NavLink>
                         </li>
+                        <li>
+                            <NavLink
+                                href={route('messages.create')}
+                                active={route().current('messages.create')}
+                            >
+                                <div className="flex items-end gap-2">
+                                    <LayoutDashboard className="h-5 w-5" />
+                                    <span>متن پیام ربات</span>
+                                </div>
+                            </NavLink>
+                        </li>
                     </ul>
                 </aside>
             </div>

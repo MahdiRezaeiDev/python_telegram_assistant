@@ -5,7 +5,7 @@ import { User } from 'lucide-react';
 export default function Nav({ title }) {
     const user = usePage().props.auth.user;
     return (
-        <nav className="absolute right-0 top-0 z-10 hidden w-full items-center bg-teal-700 p-4 md:flex md:flex-row md:flex-nowrap md:justify-end print:hidden">
+        <nav className="absolute right-0 top-0 z-10 hidden w-full items-center bg-cyan-700 p-4 md:flex md:flex-row md:flex-nowrap md:justify-end print:hidden">
             <div className="mx-autp flex w-full flex-wrap items-center justify-between px-4 md:flex-nowrap md:px-10">
                 <p className="text-sm font-semibold uppercase text-white md:inline-block">
                     {title}
@@ -37,7 +37,7 @@ export default function Nav({ title }) {
                             </span>
                         </Dropdown.Trigger>
                         <Dropdown.Content>
-                            <div className="flex w-full items-center justify-between whitespace-nowrap bg-teal-700 p-4 font-normal text-white">
+                            <div className="flex w-full items-center justify-between whitespace-nowrap bg-cyan-700 p-4 font-normal text-white">
                                 <p className="text-xs font-semibold">
                                     حساب کاربری:
                                 </p>
@@ -48,21 +48,21 @@ export default function Nav({ title }) {
                             <ResponsiveNavLink
                                 href={route('profile.edit')}
                                 active={route().current('profile.edit')}
-                                className="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-teal-700"
+                                className="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-cyan-700"
                             >
                                 پروفایل کاربری
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 href={route('myAccount')}
                                 active={route().current('myAccount')}
-                                className="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-teal-700"
+                                className="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-cyan-700"
                             >
                                 حساب تلگرام
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 method="post"
                                 href={route('logout')}
-                                className="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-right text-sm font-normal text-teal-700"
+                                className="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-right text-sm font-normal text-cyan-700"
                             >
                                 خروج
                             </ResponsiveNavLink>
