@@ -1,6 +1,8 @@
+import PrimaryButton from '@/Components/PrimaryButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import axios from 'axios';
+import { FileSpreadsheet, Loader2, Upload } from 'lucide-react';
 import { useState } from 'react';
 import { Toaster, toast } from 'sonner';
 
@@ -20,16 +22,14 @@ export default function Import() {
         formData.append('file', file);
 
         try {
-            const res = await axios.post(route('products.store'), formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
+            await axios.post(route('products.store'), formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
             });
 
             toast.success('فایل با موفقیت بارگذاری شد!', {
                 description: 'تمام داده‌ها به درستی در دیتابیس ذخیره شدند.',
                 position: 'bottom-left',
-                duration: 3000,
+                duration: 4000,
                 style: {
                     backgroundColor: 'seagreen',
                     fontFamily: 'Vazir',
@@ -37,14 +37,13 @@ export default function Import() {
                     fontWeight: 'bold',
                 },
             });
-
             setFile(null);
         } catch (err) {
             toast.error('خطا در بارگذاری فایل', {
                 description:
                     err.response?.data?.message || 'مشکلی در سرور رخ داده است.',
                 position: 'bottom-left',
-                duration: 3000,
+                duration: 4000,
                 style: {
                     backgroundColor: 'red',
                     fontFamily: 'Vazir',
@@ -63,7 +62,7 @@ export default function Import() {
             <Toaster richColors />
 
             <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-                <div className="w-full max-w-lg rounded-xl bg-white p-8 shadow-xl ring-1 ring-gray-200">
+                <div className="w-full max-w-lg rounded-2xl bg-white p-8 shadow-lg ring-1 ring-gray-200">
                     <h1 className="mb-3 text-center text-2xl font-bold text-gray-800">
                         بارگذاری فایل اکسل
                     </h1>
@@ -72,25 +71,58 @@ export default function Import() {
                         کنید
                     </p>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                            <label className="mb-1 block text-sm font-medium text-gray-700">
-                                انتخاب فایل
-                            </label>
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                        {/* Custom File Input */}
+                        <div className="relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-6 text-center transition hover:border-indigo-500 hover:bg-indigo-50">
                             <input
+                                id="file"
                                 type="file"
                                 accept=".xlsx,.xls,.csv"
                                 onChange={(e) => setFile(e.target.files[0])}
-                                className="w-full rounded-md border border-gray-300 p-3 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                                className="absolute inset-0 cursor-pointer opacity-0"
                             />
+                            <Upload className="mb-2 h-10 w-10 text-indigo-500" />
+                            <p className="text-gray-600">
+                                {file ? (
+                                    <span className="flex items-center justify-center gap-2 font-medium text-indigo-600">
+                                        <FileSpreadsheet className="h-5 w-5" />
+                                        {file.name}
+                                    </span>
+                                ) : (
+                                    'برای انتخاب فایل کلیک کنید یا آن را اینجا بکشید'
+                                )}
+                            </p>
+                            <p className="mt-1 text-xs text-gray-400">
+                                فرمت‌های مجاز: .xlsx, .xls, .csv
+                            </p>
                         </div>
 
-                        <button
-                            disabled={loading}
-                            className="w-full rounded-lg bg-indigo-600 px-4 py-3 font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-70"
-                        >
-                            {loading ? 'در حال بارگذاری...' : 'بارگذاری فایل'}
-                        </button>
+                        {/* Buttons */}
+                        <div className="flex gap-3">
+                            <PrimaryButton
+                                disabled={loading}
+                                className="flex w-full items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-70"
+                            >
+                                {loading ? (
+                                    <>
+                                        <Loader2 className="h-5 w-5 animate-spin" />
+                                        در حال بارگذاری...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Upload className="h-5 w-5" />
+                                        بارگذاری فایل
+                                    </>
+                                )}
+                            </PrimaryButton>
+
+                            <Link
+                                href={route('products.index')}
+                                className="flex w-full items-center justify-center rounded-lg border border-gray-300 px-4 py-3 font-semibold text-gray-700 transition hover:bg-gray-100"
+                            >
+                                برگشت
+                            </Link>
+                        </div>
                     </form>
                 </div>
             </div>

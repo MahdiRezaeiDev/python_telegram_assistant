@@ -2,7 +2,7 @@ import DangerButton from '@/Components/DangerButton';
 import Modal from '@/Components/Modal';
 import SecondaryButton from '@/Components/SecondaryButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, router, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { Edit, Trash } from 'lucide-react';
 import { useState } from 'react';
@@ -56,20 +56,34 @@ export default function ProductIndex() {
                         fontWeight: 'bold',
                     },
                 });
+                reset();
+            },
+            onError: () => {
+                console.log(errors);
             },
         });
     };
 
-    // ✅ Update a field
+    // ✅ Instant, safe update
     const handleChange = async (productId, field, value) => {
+        // 1️⃣ Immediately reflect change in UI
+        const prevProducts = [...products.data];
+        const index = prevProducts.findIndex((p) => p.id === productId);
+        if (index !== -1) prevProducts[index][field] = value;
+
+        // Optional: disable input while saving
+        setEditing({ id: productId, field: 'saving', value });
+
         try {
+            // 2️⃣ Send update to backend
             await axios.post(route('field.update', productId), {
                 field,
                 value,
             });
-            router.reload({ only: ['products'], preserveScroll: true });
+
+            // 3️⃣ Mark as done
             toast.success('ذخیره شد ✅', {
-                description: 'اطلاعات با موفقیت ذخیره شد.',
+                description: 'تغییرات با موفقیت ذخیره شد.',
                 position: 'bottom-left',
                 style: {
                     backgroundColor: 'seagreen',
@@ -78,6 +92,7 @@ export default function ProductIndex() {
                 },
             });
         } catch {
+            // 4️⃣ Revert change on failure
             toast.error('خطا در بروزرسانی', {
                 position: 'bottom-left',
                 style: {
@@ -86,6 +101,9 @@ export default function ProductIndex() {
                     color: 'white',
                 },
             });
+            if (index !== -1) prevProducts[index][field] = !value; // revert to previous
+        } finally {
+            setEditing({ id: null, field: null, value: '' });
         }
     };
 
@@ -108,65 +126,102 @@ export default function ProductIndex() {
             <Head title="لیست کد های فنی" />
             <Toaster richColors />
 
-            <div className="container mx-auto p-4">
-                <h1 className="mb-4 text-2xl font-bold">لیست محصولات</h1>
+            <div className="container mx-auto rounded-2xl bg-white p-6 shadow">
+                <h1 className="mb-6 border-b pb-2 text-2xl font-bold text-gray-800">
+                    لیست محصولات
+                </h1>
 
-                {/* 🔍 Search box */}
-                <form onSubmit={handleSearch} className="mb-4 flex gap-2">
-                    <input
-                        type="text"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder="جستجو..."
-                        className="flex-grow rounded border p-2"
-                    />
-                    <button
-                        type="submit"
-                        className="rounded bg-blue-500 px-4 py-2 text-white"
+                {/* 🔍 Top toolbar */}
+                <div className="mb-4 flex flex-col items-center justify-between gap-3 sm:flex-row">
+                    <form
+                        onSubmit={handleSearch}
+                        className="flex w-full flex-grow gap-2 sm:w-auto"
                     >
-                        جستجو
-                    </button>
-                </form>
+                        <input
+                            type="text"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="جستجو بر اساس کد یا برند..."
+                            className="flex-grow rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                        />
+                        <button
+                            type="submit"
+                            className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-700"
+                        >
+                            جستجو
+                        </button>
+                    </form>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                        <Link
+                            href={route('products.create')}
+                            className="rounded-lg bg-amber-600 px-3 py-2 text-sm font-semibold text-white hover:bg-amber-700"
+                        >
+                            دانلود نمونه فایل
+                        </Link>
+                        <Link
+                            href={route('products.create')}
+                            className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                        >
+                            آپلود کدهای فنی
+                        </Link>
+                        <DangerButton className="rounded-lg bg-rose-600 px-3 py-2 text-sm text-white hover:bg-rose-700">
+                            حذف همه کدها
+                        </DangerButton>
+                    </div>
+                </div>
 
                 {/* 🧾 Product Table */}
-                <div className="overflow-x-auto">
-                    <table className="min-w-full border border-gray-200 text-sm">
-                        <thead className="bg-teal-700 text-white">
+                <div className="overflow-x-auto rounded-lg border shadow-sm">
+                    <table className="min-w-full divide-y divide-gray-200 text-sm">
+                        <thead className="bg-teal-700 uppercase text-white">
                             <tr>
-                                <th className="px-4 py-2">#</th>
-                                <th className="px-4 py-2">کد فنی</th>
-                                <th className="px-4 py-2">مشابه ها</th>
-                                <th className="px-4 py-2">برند</th>
-                                <th className="px-4 py-2">قیمت</th>
-                                <th className="px-4 py-2">توضیحات</th>
-                                <th className="px-4 py-2">ارسال بدون قیمت</th>
-                                <th className="px-4 py-2">اجازه ربات</th>
-                                <th className="px-4 py-2">اقدامات</th>
+                                <th className="px-4 py-3 text-center">#</th>
+                                <th className="px-4 py-3 text-right">کد فنی</th>
+                                <th className="px-4 py-3 text-right">
+                                    مشابه‌ها
+                                </th>
+                                <th className="px-4 py-3 text-right">برند</th>
+                                <th className="px-4 py-3 text-right">قیمت</th>
+                                <th className="px-4 py-3 text-right">
+                                    توضیحات
+                                </th>
+                                <th className="px-4 py-3 text-center">
+                                    ارسال بدون قیمت
+                                </th>
+                                <th className="px-4 py-3 text-center">
+                                    اجازه ربات
+                                </th>
+                                <th className="px-4 py-3 text-center">
+                                    اقدامات
+                                </th>
                             </tr>
                         </thead>
 
-                        <tbody>
+                        <tbody className="divide-y divide-gray-200">
                             {products.data.length > 0 ? (
                                 products.data.map((product, index) => (
                                     <tr
                                         key={product.id}
-                                        className="even:bg-gray-100"
+                                        className={`transition hover:bg-gray-50 ${
+                                            editing.id === product.id
+                                                ? 'bg-yellow-50'
+                                                : 'bg-white'
+                                        }`}
                                     >
-                                        <td className="px-4 py-2">
+                                        <td className="px-4 py-2 text-center text-gray-600">
                                             {products.from + index}
                                         </td>
-                                        <td className="px-4 py-2">
+                                        <td className="px-4 py-2 text-right font-mono text-gray-800">
                                             {product.code}
                                         </td>
-
-                                        {/* مشابه‌ها */}
-                                        <td className="px-4 py-2">
-                                            <div className="grid grid-cols-2 gap-1 text-xs">
+                                        <td className="px-4 py-2 text-right">
+                                            <div className="flex flex-wrap gap-1">
                                                 {product.simillars.map(
                                                     (sim) => (
                                                         <span
                                                             key={sim.id}
-                                                            className="inline rounded bg-gray-200 px-2 py-1"
+                                                            className="inline rounded-md bg-gray-200 px-2 py-1 text-xs"
                                                         >
                                                             {sim.similar_code}
                                                         </span>
@@ -174,7 +229,6 @@ export default function ProductIndex() {
                                                 )}
                                             </div>
                                         </td>
-
                                         {/* ✅ برند */}
                                         <td
                                             className="cursor-pointer px-4 py-2"
@@ -200,7 +254,6 @@ export default function ProductIndex() {
                                                 product.brand || '-'
                                             )}
                                         </td>
-
                                         {/* ✅ قیمت */}
                                         <td
                                             className="cursor-pointer px-4 py-2 text-center"
@@ -226,7 +279,6 @@ export default function ProductIndex() {
                                                 product.price || '-'
                                             )}
                                         </td>
-
                                         {/* ✅ توضیحات */}
                                         <td
                                             className="cursor-pointer px-4 py-2"
@@ -252,7 +304,6 @@ export default function ProductIndex() {
                                                 product.description || '-'
                                             )}
                                         </td>
-
                                         {/* ✅ Checkboxes */}
                                         <td className="px-4 py-2 text-center">
                                             <input
@@ -260,6 +311,9 @@ export default function ProductIndex() {
                                                 checked={
                                                     !!product.without_price
                                                 }
+                                                disabled={
+                                                    editing.id === product.id
+                                                } // disable while saving
                                                 onChange={(e) =>
                                                     handleChange(
                                                         product.id,
@@ -277,6 +331,9 @@ export default function ProductIndex() {
                                                 checked={
                                                     !!product.is_bot_allowed
                                                 }
+                                                disabled={
+                                                    editing.id === product.id
+                                                } // disable while saving
                                                 onChange={(e) =>
                                                     handleChange(
                                                         product.id,
@@ -288,14 +345,28 @@ export default function ProductIndex() {
                                                 }
                                             />
                                         </td>
-
                                         {/* ✏️ Actions */}
                                         <td className="px-4 py-2 text-center">
                                             <div className="flex justify-center gap-2">
                                                 <Edit
                                                     onClick={() =>
                                                         toast.info(
-                                                            'در حال توسعه...',
+                                                            'در حال توسعه',
+                                                            {
+                                                                description:
+                                                                    'امکان ویرایش تمامی مشخصات در حال حاضر در دسترس نیست',
+                                                                position:
+                                                                    'bottom-left',
+                                                                style: {
+                                                                    backgroundColor:
+                                                                        'dodgerblue',
+                                                                    fontFamily:
+                                                                        'Vazir',
+                                                                    color: 'white',
+                                                                    fontWeight:
+                                                                        'bold',
+                                                                },
+                                                            },
                                                         )
                                                     }
                                                     className="h-5 w-5 cursor-pointer text-sky-700"
@@ -316,9 +387,9 @@ export default function ProductIndex() {
                                 <tr>
                                     <td
                                         colSpan="9"
-                                        className="px-4 py-2 text-center"
+                                        className="px-4 py-6 text-center text-gray-500"
                                     >
-                                        هیچ محصولی یافت نشد
+                                        هیچ محصولی یافت نشد 🙁
                                     </td>
                                 </tr>
                             )}
@@ -327,21 +398,30 @@ export default function ProductIndex() {
                 </div>
 
                 {/* 🔄 Pagination */}
-                <div className="mt-4 flex justify-center space-x-2">
-                    {products.links.map((link, i) => (
-                        <button
-                            key={i}
-                            className={`rounded border px-3 py-1 ${
-                                link.active
-                                    ? 'bg-blue-500 text-white'
-                                    : 'bg-white'
-                            }`}
-                            disabled={!link.url}
-                            onClick={() => link.url && router.get(link.url)}
-                            dangerouslySetInnerHTML={{ __html: link.label }}
-                        />
-                    ))}
-                </div>
+                {products.links.length > 3 && (
+                    <div className="mt-5 flex flex-wrap justify-center gap-1 text-sm">
+                        {products.links.map((link, idx) => {
+                            let label = link.label;
+                            if (label.includes('Next')) label = 'بعدی';
+                            else if (label.includes('Previous')) label = 'قبلی';
+
+                            return (
+                                <button
+                                    key={idx}
+                                    onClick={() =>
+                                        link.url && router.get(link.url)
+                                    }
+                                    className={`rounded-md border px-3 py-1 ${
+                                        link.active
+                                            ? 'bg-teal-700 text-white'
+                                            : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                                    } ${!link.url ? 'cursor-not-allowed opacity-50' : ''}`}
+                                    dangerouslySetInnerHTML={{ __html: label }}
+                                />
+                            );
+                        })}
+                    </div>
+                )}
             </div>
 
             {/* ❌ Delete Confirmation */}
@@ -353,13 +433,13 @@ export default function ProductIndex() {
                     <p className="mt-1 text-sm text-gray-600">
                         بعد از حذف، اطلاعات دیگر در دسترس نخواهد بود.
                     </p>
-                    <div className="mt-6 flex justify-end">
+                    <div className="mt-6 flex justify-start">
+                        <DangerButton className="me-3" disabled={processing}>
+                            حذف
+                        </DangerButton>
                         <SecondaryButton onClick={cancelDeleting}>
                             انصراف
                         </SecondaryButton>
-                        <DangerButton className="ms-3" disabled={processing}>
-                            حذف
-                        </DangerButton>
                     </div>
                 </form>
             </Modal>
