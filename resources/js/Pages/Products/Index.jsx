@@ -101,7 +101,7 @@ export default function ProductIndex() {
                     color: 'white',
                 },
             });
-            if (index !== -1) prevProducts[index][field] = !value; // revert to previous
+            if (index !== -1) prevProducts[index][field] = !value;
         } finally {
             setEditing({ id: null, field: null, value: '' });
         }
