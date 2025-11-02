@@ -69,6 +69,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/default/messages', DefaultMessageController::class)->except(['index', 'show', 'edit']);
 
     Route::get('/prices', [PriceController::class, 'index'])->name('prices.index');
+    Route::post('/prices', [PriceController::class, 'store'])->name('prices.store');
 
     Route::get('/sellers', [SellerController::class, 'index'])->name('sellers.index');
     Route::post('/sellers', [SellerController::class, 'store'])->name('sellers.store');

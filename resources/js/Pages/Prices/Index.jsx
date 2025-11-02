@@ -60,23 +60,24 @@ export default function SellersTable({ sellers = [] }) {
         <AuthenticatedLayout title="لیست فروشنده‌ها و قیمت‌ها">
             <Head title="قیمت‌ها" />
             <Toaster richColors />
-            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
-                <div className="mx-auto w-full max-w-6xl rounded-2xl bg-white/80 p-6 shadow-xl ring-1 ring-gray-200 backdrop-blur">
+
+            <div className="min-h-screen bg-gray-50 p-6">
+                <div className="mx-auto w-full max-w-6xl">
                     {/* Header */}
-                    <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                        <h1 className="text-2xl font-extrabold tracking-tight text-gray-800">
+                    <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                        <h1 className="text-2xl font-semibold text-gray-800">
                             لیست فروشنده‌ها و قیمت‌ها
                         </h1>
                         <div className="flex flex-wrap gap-2">
                             <Link
                                 href={route('prices.index')}
-                                className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700"
+                                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
                             >
                                 لیست قیمت‌ها
                             </Link>
                             <Link
                                 href={route('sellers.index')}
-                                className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-green-700"
+                                className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-green-700"
                             >
                                 لیست فروشنده‌ها
                             </Link>
@@ -84,21 +85,21 @@ export default function SellersTable({ sellers = [] }) {
                     </div>
 
                     {/* Table */}
-                    <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-md">
-                        <table className="min-w-full text-sm">
-                            <thead className="sticky top-0 z-10 bg-gradient-to-l from-cyan-700 to-sky-700 text-white">
+                    <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+                        <table className="min-w-full border-collapse text-sm">
+                            <thead className="bg-gray-100 text-gray-700">
                                 <tr>
-                                    <th className="w-64 px-4 py-3 text-right font-semibold">
+                                    <th className="sticky top-0 border-b px-4 py-2 text-right font-medium">
                                         فروشنده
                                     </th>
                                     {codes.map((code, idx) => (
                                         <th
                                             key={code.id}
-                                            className="px-1 py-3 text-right"
+                                            className="border-b px-2 py-2"
                                         >
                                             <input
                                                 type="text"
-                                                placeholder="کد فنی قطعه"
+                                                placeholder="کد فنی"
                                                 value={code.code}
                                                 onChange={(e) =>
                                                     handleCodeChange(
@@ -106,35 +107,35 @@ export default function SellersTable({ sellers = [] }) {
                                                         e.target.value,
                                                     )
                                                 }
-                                                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 placeholder-gray-400 transition focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-300"
+                                                className="w-full rounded border border-gray-300 px-2 py-1 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-300"
                                             />
                                         </th>
                                     ))}
-                                    <th className="px-2 text-center">
+                                    <th className="border-b px-2 py-2 text-center">
                                         <button
                                             type="button"
                                             onClick={addCodeColumn}
-                                            className="rounded-full p-1.5 text-white transition hover:bg-white/10 active:scale-95"
                                             title="افزودن کد جدید"
+                                            className="rounded-full p-1 text-gray-600 transition hover:bg-gray-200"
                                         >
-                                            <PlusCircle className="h-6 w-6" />
+                                            <PlusCircle className="h-5 w-5" />
                                         </button>
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-200 bg-white">
+                            <tbody>
                                 {sellers.map((seller) => (
                                     <tr
                                         key={seller.id}
                                         className="transition hover:bg-gray-50"
                                     >
-                                        <td className="px-4 py-3 font-medium text-gray-900">
-                                            {seller.name}
+                                        <td className="border-b px-4 py-2 font-medium text-gray-800">
+                                            {seller.full_name}
                                         </td>
                                         {codes.map((code) => (
                                             <td
                                                 key={code.id}
-                                                className="px-2 py-2"
+                                                className="border-b px-2 py-2"
                                             >
                                                 <input
                                                     type="number"
@@ -151,23 +152,23 @@ export default function SellersTable({ sellers = [] }) {
                                                             e.target.value,
                                                         )
                                                     }
-                                                    className="w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-700 placeholder-gray-400 transition focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-300"
+                                                    className="w-full rounded border border-gray-300 px-2 py-1 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-300"
                                                 />
                                             </td>
                                         ))}
-                                        <td></td>
+                                        <td className="border-b px-2 py-2"></td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     </div>
 
-                    {/* Submit Button */}
-                    <div className="mt-6 flex justify-end">
+                    {/* Submit */}
+                    <div className="mt-4 flex justify-end">
                         <button
                             onClick={submit}
                             disabled={loading}
-                            className={`flex items-center gap-2 rounded-lg px-6 py-2 font-semibold text-white shadow transition ${
+                            className={`flex items-center gap-2 rounded-md px-4 py-2 font-medium text-white transition ${
                                 loading
                                     ? 'cursor-not-allowed bg-green-400'
                                     : 'bg-green-600 hover:bg-green-700'
