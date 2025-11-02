@@ -6,13 +6,28 @@ use App\Models\Price;
 use App\Models\Seller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class PriceController extends Controller
 {
     public function index()
     {
+        // Fetch prices for the authenticated user, eager-load seller relationship
+        $prices = Price::with('seller')
+            ->where('user_id', Auth::id())
+            ->orderBy('created_at', 'desc') // optional: newest first
+            ->paginate(30);
+
+        // Map data if needed, but Inertia can handle models directly
+        return Inertia::render('Prices/Index', [
+            'prices' => $prices,
+        ]);
+    }
+
+    public function create()
+    {
         $sellers = Seller::where('user_id', Auth::id())->get();
-        return inertia('Prices/Index', compact('sellers'));
+        return inertia('Prices/Create', compact('sellers'));
     }
 
     /**
@@ -55,5 +70,31 @@ class PriceController extends Controller
             'success' => true,
             'message' => 'قیمت‌ها با موفقیت ذخیره شدند.',
         ]);
+    }
+
+    // --- Update a price ---
+    public function update(Request $request, Price $price)
+    {
+        $request->validate([
+            'code' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+        ]);
+
+        $price->update([
+            'code_name' => $request->code,
+            'price' => $request->price,
+        ]);
+
+        return response()->json([
+            'updatedPrice' => $price->load('seller'),
+        ]);
+    }
+
+    // --- Delete a price ---
+    public function destroy(Price $price)
+    {
+        $price->delete();
+
+        return response()->json(['message' => 'Deleted']);
     }
 }

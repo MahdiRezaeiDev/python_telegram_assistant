@@ -30,7 +30,7 @@ export default function Password() {
                     position: 'bottom-left',
                     duration: 3000,
                     style: {
-                        backgroundColor: 'red',
+                        backgroundColor: 'seagreen',
                         fontFamily: 'Vazir',
                         color: 'white',
                         fontWeight: 'bold',

@@ -1,214 +1,247 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import axios from 'axios';
-import { PlusCircle, Save } from 'lucide-react';
+import { Pencil, Trash } from 'lucide-react';
 import { useState } from 'react';
 import { toast, Toaster } from 'sonner';
 
-export default function SellersTable({ sellers = [] }) {
-    const [codes, setCodes] = useState([{ id: 1, code: '' }]);
-    const [prices, setPrices] = useState(
-        sellers.reduce((acc, s) => ({ ...acc, [s.id]: {} }), {}),
-    );
+export default function PricesIndex({ prices: initialPrices }) {
+    const [prices, setPrices] = useState(initialPrices.data);
+    const [pagination, setPagination] = useState(initialPrices.meta);
+    const [editingPrice, setEditingPrice] = useState(null);
+    const [formData, setFormData] = useState({ code: '', price: '' });
     const [loading, setLoading] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [deleteTarget, setDeleteTarget] = useState(null); // For delete modal
 
-    const addCodeColumn = () => {
-        setCodes((prev) => [...prev, { id: prev.length + 1, code: '' }]);
+    // --- Open edit modal ---
+    const openEditModal = (price) => {
+        setEditingPrice(price);
+        setFormData({ code: price.code_name, price: price.price }); // use code_name
+        setShowEditModal(true);
     };
+    const closeEditModal = () => setShowEditModal(false);
 
-    const handleCodeChange = (index, value) => {
-        const updated = [...codes];
-        updated[index].code = value;
-        setCodes(updated);
-    };
-
-    const handlePriceChange = (sellerId, codeId, value) => {
-        setPrices((prev) => ({
-            ...prev,
-            [sellerId]: { ...prev[sellerId], [codeId]: value },
-        }));
-    };
-
-    const submit = async () => {
+    // --- Update price ---
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+        if (!editingPrice) return;
+        setLoading(true);
         try {
-            setLoading(true);
-            const payload = sellers.map((s) => ({
-                seller_id: s.id,
-                codes: codes
-                    .filter((c) => prices[s.id][c.id])
-                    .map((c) => ({
-                        code: c.code,
-                        price: prices[s.id][c.id],
-                    })),
-            }));
+            const response = await axios.put(
+                route('prices.update', editingPrice.id),
+                formData,
+            );
+            const updated = response.data.updatedPrice;
 
-            await axios.post(route('prices.store'), { data: payload });
+            setPrices((prev) =>
+                prev.map((p) => (p.id === updated.id ? updated : p)),
+            );
 
-            toast.success('قیمت‌ها با موفقیت ذخیره شدند.', {
+            toast.success('قیمت با موفقیت بروزرسانی شد', {
                 position: 'bottom-left',
-                duration: 4000,
             });
+            closeEditModal();
         } catch (err) {
             console.error(err);
-            toast.error('خطا در ذخیره قیمت‌ها!', { position: 'bottom-left' });
+            toast.error('خطا در بروزرسانی قیمت', { position: 'bottom-left' });
         } finally {
             setLoading(false);
         }
     };
 
-    // Remove a code column
-    const removeCodeColumn = (codeId) => {
-        // Remove code from codes array
-        setCodes((prev) => prev.filter((c) => c.id !== codeId));
+    // --- Delete price ---
+    const openDeleteModal = (price) => setDeleteTarget(price);
+    const closeDeleteModal = () => setDeleteTarget(null);
 
-        // Remove prices associated with this code for all sellers
-        setPrices((prev) => {
-            const updated = { ...prev };
-            Object.keys(updated).forEach((sellerId) => {
-                if (updated[sellerId][codeId] !== undefined) {
-                    delete updated[sellerId][codeId];
-                }
-            });
-            return updated;
-        });
+    const handleDelete = async () => {
+        if (!deleteTarget) return;
+        try {
+            await axios.delete(route('prices.destroy', deleteTarget.id));
+            setPrices((prev) => prev.filter((p) => p.id !== deleteTarget.id));
+            toast.success('قیمت حذف شد', { position: 'bottom-left' });
+            closeDeleteModal();
+        } catch (err) {
+            console.error(err);
+            toast.error('خطا در حذف قیمت', { position: 'bottom-left' });
+        }
     };
 
     return (
-        <AuthenticatedLayout title="لیست فروشنده‌ها و قیمت‌ها">
-            <Head title="قیمت‌ها" />
+        <AuthenticatedLayout title="لیست قیمت‌ها">
+            <Head title="لیست قیمت‌ها" />
             <Toaster richColors />
 
-            <div className="min-h-screen bg-gray-50 p-6">
-                <div className="mx-auto w-full max-w-6xl">
-                    {/* Header */}
-                    <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                        <h1 className="text-2xl font-semibold text-gray-800">
-                            لیست فروشنده‌ها و قیمت‌ها
-                        </h1>
-                        <div className="flex flex-wrap gap-2">
-                            <Link
-                                href={route('prices.index')}
-                                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
-                            >
-                                لیست قیمت‌ها
-                            </Link>
-                            <Link
-                                href={route('sellers.index')}
-                                className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-green-700"
-                            >
-                                لیست فروشنده‌ها
-                            </Link>
+            <div className="mx-auto max-w-6xl p-6">
+                <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <h1 className="text-2xl font-bold text-gray-900">
+                        لیست قیمت‌ها
+                    </h1>
+                </div>
+
+                {/* Table */}
+                <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+                    <table className="min-w-full divide-y divide-gray-200 text-sm">
+                        <thead className="bg-gray-100 font-medium text-gray-700">
+                            <tr>
+                                <th className="px-4 py-3 text-right">
+                                    فروشنده
+                                </th>
+                                <th className="px-4 py-3 text-right">
+                                    کد فنی قطعه
+                                </th>
+                                <th className="px-4 py-3 text-right">قیمت</th>
+                                <th className="px-4 py-3 text-center">
+                                    عملیات
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 bg-white">
+                            {prices.length > 0 ? (
+                                prices.map((price) => (
+                                    <tr
+                                        key={price.id}
+                                        className="transition-colors hover:bg-gray-50"
+                                    >
+                                        <td className="px-4 py-3 font-medium text-gray-800">
+                                            {price.seller.full_name}
+                                        </td>
+                                        <td className="px-4 py-3 text-gray-800">
+                                            {price.code_name}
+                                        </td>
+                                        <td className="px-4 py-3 text-gray-800">
+                                            {price.price.toLocaleString()}
+                                        </td>
+                                        <td className="flex justify-center gap-2 px-4 py-3 text-center">
+                                            <button
+                                                onClick={() =>
+                                                    openEditModal(price)
+                                                }
+                                                className="text-yellow-500 hover:text-yellow-600"
+                                                title="ویرایش"
+                                            >
+                                                <Pencil className="h-5 w-5" />
+                                            </button>
+                                            <button
+                                                onClick={() =>
+                                                    openDeleteModal(price)
+                                                }
+                                                className="text-red-600 hover:text-red-700"
+                                                title="حذف"
+                                            >
+                                                <Trash className="h-5 w-5" />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td
+                                        colSpan="4"
+                                        className="py-4 text-center text-gray-500"
+                                    >
+                                        هیچ قیمتی یافت نشد.
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Edit Modal */}
+                {showEditModal && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                        <div className="animate-fadeIn w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+                            <h2 className="mb-4 text-xl font-bold text-gray-800">
+                                ویرایش قیمت
+                            </h2>
+                            <form onSubmit={handleUpdate} className="space-y-4">
+                                <div>
+                                    <label className="mb-1 block text-sm font-medium text-gray-700">
+                                        کد فنی قطعه
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={formData.code}
+                                        onChange={(e) =>
+                                            setFormData({
+                                                ...formData,
+                                                code: e.target.value,
+                                            })
+                                        }
+                                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="mb-1 block text-sm font-medium text-gray-700">
+                                        قیمت
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={formData.price}
+                                        onChange={(e) =>
+                                            setFormData({
+                                                ...formData,
+                                                price: e.target.value,
+                                            })
+                                        }
+                                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700"
+                                        required
+                                    />
+                                </div>
+                                <div className="mt-4 flex justify-end gap-3">
+                                    <button
+                                        type="button"
+                                        onClick={closeEditModal}
+                                        className="rounded-lg bg-gray-300 px-4 py-2 hover:bg-gray-400"
+                                    >
+                                        لغو
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        disabled={loading}
+                                        className="rounded-lg bg-sky-600 px-4 py-2 text-white hover:bg-sky-700 disabled:opacity-60"
+                                    >
+                                        {loading ? 'در حال ذخیره...' : 'ذخیره'}
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
+                )}
 
-                    {/* Table */}
-                    <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
-                        <table className="min-w-full border-collapse text-sm">
-                            <thead className="bg-gray-100 text-gray-700">
-                                <tr>
-                                    <th className="sticky top-0 border-b px-4 py-2 text-right font-medium">
-                                        فروشنده
-                                    </th>
-                                    {codes.map((code, idx) => (
-                                        <th
-                                            key={code.id}
-                                            className="px-1 py-3 text-right"
-                                        >
-                                            <div className="flex gap-1">
-                                                <input
-                                                    type="text"
-                                                    placeholder="کد فنی قطعه"
-                                                    value={code.code}
-                                                    onChange={(e) =>
-                                                        handleCodeChange(
-                                                            idx,
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-300"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        removeCodeColumn(
-                                                            code.id,
-                                                        )
-                                                    }
-                                                    className="text-red-600 hover:text-red-800"
-                                                    title="حذف کد"
-                                                >
-                                                    ×
-                                                </button>
-                                            </div>
-                                        </th>
-                                    ))}
-                                    <th className="border-b px-2 py-2 text-center">
-                                        <button
-                                            type="button"
-                                            onClick={addCodeColumn}
-                                            title="افزودن کد جدید"
-                                            className="rounded-full p-1 text-gray-600 transition hover:bg-gray-200"
-                                        >
-                                            <PlusCircle className="h-5 w-5" />
-                                        </button>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {sellers.map((seller) => (
-                                    <tr
-                                        key={seller.id}
-                                        className="transition hover:bg-gray-50"
-                                    >
-                                        <td className="border-b px-4 py-2 font-medium text-gray-800">
-                                            {seller.full_name}
-                                        </td>
-                                        {codes.map((code) => (
-                                            <td
-                                                key={code.id}
-                                                className="border-b px-2 py-2"
-                                            >
-                                                <input
-                                                    placeholder="قیمت"
-                                                    value={
-                                                        prices[seller.id][
-                                                            code.id
-                                                        ] || ''
-                                                    }
-                                                    onChange={(e) =>
-                                                        handlePriceChange(
-                                                            seller.id,
-                                                            code.id,
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                    className="w-full rounded border border-gray-300 px-2 py-1 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-300"
-                                                />
-                                            </td>
-                                        ))}
-                                        <td className="border-b px-2 py-2"></td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                {/* Delete Modal */}
+                {deleteTarget && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                        <div className="animate-fadeIn w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
+                            <h2 className="mb-4 text-lg font-bold text-gray-800">
+                                حذف قیمت
+                            </h2>
+                            <p className="mb-4 text-gray-700">
+                                آیا مطمئن هستید که می‌خواهید قیمت قطعه{' '}
+                                <span className="font-medium">
+                                    {deleteTarget.code_name}
+                                </span>{' '}
+                                را حذف کنید؟
+                            </p>
+                            <div className="flex justify-end gap-3">
+                                <button
+                                    onClick={closeDeleteModal}
+                                    className="rounded-lg bg-gray-300 px-4 py-2 hover:bg-gray-400"
+                                >
+                                    لغو
+                                </button>
+                                <button
+                                    onClick={handleDelete}
+                                    className="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+                                >
+                                    حذف
+                                </button>
+                            </div>
+                        </div>
                     </div>
-
-                    {/* Submit */}
-                    <div className="mt-4 flex justify-end">
-                        <button
-                            onClick={submit}
-                            disabled={loading}
-                            className={`flex items-center gap-2 rounded-md px-4 py-2 font-medium text-white transition ${
-                                loading
-                                    ? 'cursor-not-allowed bg-green-400'
-                                    : 'bg-green-600 hover:bg-green-700'
-                            }`}
-                        >
-                            <Save className="h-5 w-5" />
-                            {loading ? 'در حال ذخیره...' : 'ذخیره قیمت‌ها'}
-                        </button>
-                    </div>
-                </div>
+                )}
             </div>
         </AuthenticatedLayout>
     );

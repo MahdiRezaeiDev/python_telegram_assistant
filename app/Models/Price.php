@@ -12,4 +12,9 @@ class Price extends Model
         'code_name',
         'price'
     ];
+
+    public function seller()
+    {
+        return $this->belongsTo(Seller::class);
+    }
 }
