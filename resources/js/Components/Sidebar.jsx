@@ -150,6 +150,17 @@ export default function Sidebar() {
                                 </div>
                             </NavLink>
                         </li>
+                        <li>
+                            <NavLink
+                                href={route('prices.index')}
+                                active={route().current('prices.index')}
+                            >
+                                <div className="flex items-end gap-2">
+                                    <MessageSquareCode className="h-5 w-5" />
+                                    <span>ثبت قیمت بازار</span>
+                                </div>
+                            </NavLink>
+                        </li>
                     </ul>
                 </aside>
             </div>

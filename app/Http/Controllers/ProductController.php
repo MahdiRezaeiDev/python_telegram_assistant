@@ -109,6 +109,7 @@ class ProductController extends Controller
     public function downloadSample()
     {
         $path = storage_path('app/public/partNumbers.xlsx');
+
         return Response::download($path, 'partNumbers.xlsx');
     }
 

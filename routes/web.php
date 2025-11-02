@@ -15,6 +15,9 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/products/downloadSample', [ProductController::class, 'downloadSample'])->name('products.downloadSample');
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/', function () {
         return Inertia::render('Dashboard');
@@ -58,7 +61,6 @@ Route::middleware('auth')->group(function () {
 
     // Products Related controllers
     Route::post('/products/{product}/field', [ProductController::class, 'fieldUpdate'])->name('field.update');
-    Route::post('/products/downloadSample', [ProductController::class, 'downloadSample'])->name('products.downloadSample');
     Route::resource('/products', ProductController::class)->except('show');
 
     // Robot Default message Routes
