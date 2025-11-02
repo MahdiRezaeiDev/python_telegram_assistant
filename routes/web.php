@@ -58,6 +58,7 @@ Route::middleware('auth')->group(function () {
 
     // Products Related controllers
     Route::post('/products/{product}/field', [ProductController::class, 'fieldUpdate'])->name('field.update');
+    Route::post('/products/downloadSample', [ProductController::class, 'downloadSample'])->name('products.downloadSample');
     Route::resource('/products', ProductController::class)->except('show');
 
     // Robot Default message Routes

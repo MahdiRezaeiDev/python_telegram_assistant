@@ -6,8 +6,8 @@ use App\Models\Product;
 use App\Models\SimilarProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Response;
 use Inertia\Inertia;
-use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ProductController extends Controller
@@ -106,28 +106,10 @@ class ProductController extends Controller
         return back()->with('success', 'محصولات با موفقیت وارد شدند.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Product $product)
+    public function downloadSample()
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Product $product)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Product $product)
-    {
-        //
+        $path = storage_path('app/public/partNumbers.xlsx');
+        return Response::download($path, 'partNumbers.xlsx');
     }
 
 
