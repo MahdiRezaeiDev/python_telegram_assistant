@@ -61,7 +61,7 @@ export default function Index({ users }) {
 
                             <Link
                                 href={route('users.create')}
-                                className="rounded bg-teal-700 px-4 py-2 text-xs font-bold text-white hover:shadow-md"
+                                className="rounded bg-cyan-700 px-4 py-2 text-xs font-bold text-white hover:shadow-md"
                             >
                                 ثبت کاربر جدید
                             </Link>
@@ -71,7 +71,7 @@ export default function Index({ users }) {
                         <div className="relative w-full overflow-x-auto overflow-y-visible rounded-b">
                             <table className="min-w-full border-collapse bg-transparent text-right">
                                 <thead>
-                                    <tr className="bg-teal-700 text-white">
+                                    <tr className="bg-cyan-700 text-white">
                                         <th className="px-6 py-3 text-right text-sm">
                                             #
                                         </th>

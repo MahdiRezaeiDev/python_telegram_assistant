@@ -68,13 +68,13 @@ export default function Index({ contacts }) {
                                     placeholder="جستجو بر اساس نام، شماره یا نام کاربری..."
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
-                                    className="w-full rounded border px-4 py-2 text-xs shadow-sm focus:outline-none focus:ring focus:ring-teal-400"
+                                    className="w-full rounded border px-4 py-2 text-xs shadow-sm focus:outline-none focus:ring focus:ring-cyan-400"
                                 />
                                 <Search className="absolute left-2 top-2 h-4 w-4" />
                             </div>
                             <PrimaryButton
                                 onClick={loadContacts}
-                                className="rounded bg-teal-700 px-4 py-2 text-xs font-bold text-white hover:shadow-md"
+                                className="rounded bg-cyan-700 px-4 py-2 text-xs font-bold text-white hover:shadow-md"
                             >
                                 بارگیری مخاطبین
                             </PrimaryButton>
@@ -84,7 +84,7 @@ export default function Index({ contacts }) {
                         <div className="relative w-full overflow-x-auto overflow-y-visible rounded-b">
                             <table className="min-w-full border-collapse bg-transparent text-right">
                                 <thead>
-                                    <tr className="bg-teal-700 text-white">
+                                    <tr className="bg-cyan-700 text-white">
                                         <th className="px-6 py-3 text-right text-sm">
                                             #
                                         </th>

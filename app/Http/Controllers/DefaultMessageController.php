@@ -4,16 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\DefaultMessage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class DefaultMessageController extends Controller
 {
-    // صفحه را برمی‌گرداند (Inertia) با دادهٔ فعلی
+
     public function create()
     {
-        $reply = DefaultMessage::first(); // تنها یک ردیف فرض می‌کنیم
+        $reply = DefaultMessage::where('user_id', Auth::id())->first();
         return Inertia::render('Messages/Index', [
-            'defaultReply' => $reply ? $reply->content : null,
+            'defaultReply' => $reply ? $reply : null,
         ]);
     }
 
@@ -27,23 +28,19 @@ class DefaultMessageController extends Controller
         $reply = DefaultMessage::first();
 
         if ($reply) {
-            $reply->update(['content' => $validated['content']]);
+            $reply->update(['message' => $validated['content']]);
         } else {
-            DefaultMessage::create(['content' => $validated['content']]);
+            DefaultMessage::create(['user_id' => Auth::id(), 'message' => $validated['content']]);
         }
 
         return redirect()->back()->with('success', 'پیام پیش‌فرض ذخیره شد.');
     }
 
     // حذف (پاک کردن متن، ردیف می‌ماند اما content = null)
-    public function destroy()
+    public function destroy(String $id)
     {
-        $reply = DefaultMessage::first();
-
-        if ($reply) {
-            $reply->update(['content' => null]);
-        }
-
+        $message = DefaultMessage::find($id);
+        $message->delete();
         return redirect()->back()->with('success', 'پیام پیش‌فرض حذف شد.');
     }
 }

@@ -7,33 +7,83 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Textarea } from '@/components/UI/Textarea'; // فرض بر وجود کامپوننت شاد‌سی‌ان
+import { Textarea } from '@/components/ui/textarea'; // ✅ correct import path (lowercase)
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm } from '@inertiajs/react';
-import { Save, Trash2 } from 'lucide-react';
+import { LucideUndo2, Save, Trash2 } from 'lucide-react';
+import { toast, Toaster } from 'sonner';
 
 export default function DefaultReply({ defaultReply }) {
     const form = useForm({
-        content: defaultReply ?? '',
+        id: defaultReply?.id ?? '',
+        content: defaultReply?.message ?? '',
     });
 
     function submit(e) {
         e.preventDefault();
-        form.post(route('settings.default-reply.store'), {
+        form.post(route('messages.store'), {
             preserveState: true,
             onSuccess: () => {
-                // پیام موفقیت با flash در سرور کنسل یا از sweetalert استفاده کنید
+                toast.success('اطلاعات موفقانه ذخیره شد!', {
+                    description: 'پیام پیش‌فرض شما موفقانه ذخیره گردید.',
+                    position: 'bottom-left',
+                    duration: 3000,
+                    style: {
+                        backgroundColor: 'seagreen',
+                        fontFamily: 'Vazir',
+                        color: 'white',
+                        fontWeight: 'bold',
+                    },
+                });
+            },
+            onError: () => {
+                toast.error('خطا در ذخیره پیام پیش‌فرض', {
+                    position: 'bottom-left',
+                    duration: 3000,
+                });
             },
         });
     }
 
     function remove() {
+        if (!form.data.id) {
+            toast.error('هیچ پیام فعالی برای حذف وجود ندارد.');
+            return;
+        }
+
         if (!confirm('آیا از حذف پیام پیش‌فرض مطمئن هستید؟')) return;
 
-        form.delete(route('settings.default-reply.destroy'), {
+        form.delete(route('messages.destroy', form.data.id), {
             preserveState: true,
-            onSuccess: () => {
-                form.setData('content', '');
+            onSuccess: (res) => {
+                console.log(res);
+
+                form.setData({ id: '', content: '' });
+                toast.success('عملیات موفقانه انجام شد!', {
+                    description: 'پیام پیش فرض شما موفقانه حذف گردید',
+                    position: 'bottom-left',
+                    duration: 3000,
+                    style: {
+                        backgroundColor: 'seagreen',
+                        fontFamily: 'Vazir',
+                        color: 'white',
+                        fontWeight: 'bold',
+                    },
+                });
+            },
+            onError: () => {
+                toast.success('عملیات ناموفق  !', {
+                    description:
+                        'پیام پیش فرش شما حذف نگردید، لطفا بعدا تلاش نمایید.',
+                    position: 'bottom-left',
+                    duration: 3000,
+                    style: {
+                        backgroundColor: 'red',
+                        fontFamily: 'Vazir',
+                        color: 'white',
+                        fontWeight: 'bold',
+                    },
+                });
             },
         });
     }
@@ -41,14 +91,17 @@ export default function DefaultReply({ defaultReply }) {
     return (
         <AuthenticatedLayout title="تنظیم پیام پیش‌فرض">
             <Head title="پیام پیش‌فرض" />
+            <Toaster richColors />
             <main className="p-6">
                 <div className="mx-auto max-w-3xl">
                     <Card>
                         <CardHeader>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <CardTitle>پیام پیش‌فرض پاسخ</CardTitle>
-                                    <CardDescription>
+                                    <CardTitle className="mb-2">
+                                        پیام پیش‌فرض پاسخ
+                                    </CardTitle>
+                                    <CardDescription className="text-xs">
                                         یک پیام پیش‌فرض برای پاسخ‌دهی خودکار یا
                                         پیشنهاد به اپراتورها تنظیم کنید. تنها یک
                                         پیام قابل تنظیم است.
@@ -72,11 +125,6 @@ export default function DefaultReply({ defaultReply }) {
                                     rows={6}
                                 />
 
-                                <p className="mt-2 text-xs text-muted-foreground">
-                                    می‌توانید از متغیرها نیز استفاده کنید (در
-                                    صورت نیاز، در سرور پردازش‌شان کنید).
-                                </p>
-
                                 {form.errors.content && (
                                     <p className="mt-2 text-sm text-destructive">
                                         {form.errors.content}
@@ -99,42 +147,43 @@ export default function DefaultReply({ defaultReply }) {
 
                             <CardFooter>
                                 <div className="flex w-full items-center justify-between gap-2">
-                                    <div>
+                                    <div className="flex gap-2">
                                         <Button
                                             type="submit"
                                             disabled={form.processing}
                                         >
-                                            <Save className="mr-2 h-4 w-4" />
+                                            <Save className="ml-1 h-4 w-4" />
                                             ذخیره
                                         </Button>
 
                                         <Button
                                             variant="ghost"
-                                            className="ml-2"
-                                            onClick={() => {
-                                                form.setData(
-                                                    'content',
-                                                    defaultReply ?? '',
-                                                );
-                                            }}
+                                            type="button"
+                                            onClick={() =>
+                                                form.setData({
+                                                    id: defaultReply?.id ?? '',
+                                                    content:
+                                                        defaultReply?.message ??
+                                                        '',
+                                                })
+                                            }
                                         >
+                                            <LucideUndo2 className="ml-1 h-4 w-4" />
                                             بازنشانی
                                         </Button>
                                     </div>
 
-                                    <div>
-                                        <Button
-                                            variant="destructive"
-                                            onClick={remove}
-                                            disabled={
-                                                !form.data.content ||
-                                                form.processing
-                                            }
-                                        >
-                                            <Trash2 className="ml-2 h-4 w-4" />
-                                            حذف پیام
-                                        </Button>
-                                    </div>
+                                    <Button
+                                        variant="destructive"
+                                        type="button"
+                                        onClick={remove}
+                                        disabled={
+                                            !form.data.id || form.processing
+                                        }
+                                    >
+                                        <Trash2 className="ml-2 h-4 w-4" />
+                                        حذف پیام
+                                    </Button>
                                 </div>
                             </CardFooter>
                         </form>

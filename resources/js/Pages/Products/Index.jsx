@@ -142,11 +142,11 @@ export default function ProductIndex() {
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="جستجو بر اساس کد یا برند..."
-                            className="flex-grow rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                            className="flex-grow rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
                         />
                         <button
                             type="submit"
-                            className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-700"
+                            className="rounded-lg bg-cyan-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700"
                         >
                             جستجو
                         </button>
@@ -174,7 +174,7 @@ export default function ProductIndex() {
                 {/* 🧾 Product Table */}
                 <div className="overflow-x-auto rounded-lg border shadow-sm">
                     <table className="min-w-full divide-y divide-gray-200 text-sm">
-                        <thead className="bg-teal-700 uppercase text-white">
+                        <thead className="bg-cyan-700 uppercase text-white">
                             <tr>
                                 <th className="px-4 py-3 text-center">#</th>
                                 <th className="px-4 py-3 text-right">کد فنی</th>
@@ -413,7 +413,7 @@ export default function ProductIndex() {
                                     }
                                     className={`rounded-md border px-3 py-1 ${
                                         link.active
-                                            ? 'bg-teal-700 text-white'
+                                            ? 'bg-cyan-700 text-white'
                                             : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                                     } ${!link.url ? 'cursor-not-allowed opacity-50' : ''}`}
                                     dangerouslySetInnerHTML={{ __html: label }}
