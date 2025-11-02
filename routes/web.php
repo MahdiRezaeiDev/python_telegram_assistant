@@ -69,8 +69,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('/default/messages', DefaultMessageController::class)->except(['index', 'show', 'edit']);
 
     Route::get('/prices', [PriceController::class, 'index'])->name('prices.index');
+
     Route::get('/sellers', [SellerController::class, 'index'])->name('sellers.index');
     Route::post('/sellers', [SellerController::class, 'store'])->name('sellers.store');
+    Route::put('/sellers/{seller}', [SellerController::class, 'update'])->name('sellers.update');
+    Route::delete('/sellers/{seller}', [SellerController::class, 'destroy'])->name('sellers.destroy');
+    Route::post('/sellers/{seller}/toggle-view', [SellerController::class, 'toggleView'])->name('sellers.toggleView');
 });
 
 
