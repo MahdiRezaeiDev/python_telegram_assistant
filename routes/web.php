@@ -5,6 +5,7 @@ use App\Http\Controllers\DefaultMessageController;
 use App\Http\Controllers\PriceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SellerController;
 use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -67,7 +68,9 @@ Route::middleware('auth')->group(function () {
     // Robot Default message Routes
     Route::resource('/default/messages', DefaultMessageController::class)->except(['index', 'show', 'edit']);
 
-    Route::resource('/prices', PriceController::class);
+    Route::get('/prices', [PriceController::class, 'index'])->name('prices.index');
+    Route::get('/sellers', [SellerController::class, 'index'])->name('sellers.index');
+    Route::post('/sellers', [SellerController::class, 'store'])->name('sellers.store');
 });
 
 

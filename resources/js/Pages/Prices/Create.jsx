@@ -70,7 +70,7 @@ export default function SellersTable({ sellers = [] }) {
                 </div>
 
                 {/* Table Container */}
-                <div className="overflow-x-auto rounded-xl border border-gray-200 p-2 shadow-lg">
+                <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-lg">
                     <table className="min-w-full divide-y divide-gray-200 text-sm">
                         <thead className="bg-cyan-700 text-white">
                             <tr>

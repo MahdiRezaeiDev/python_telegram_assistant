@@ -1,18 +1,16 @@
 <?php
+
 namespace App\Http\Controllers;
 
+use App\Models\Seller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PriceController extends Controller
 {
     public function index()
     {
-        $sellers = [
-            ['id' => 1, 'name' => 'علی رضایی'],
-            ['id' => 2, 'name' => 'مهدی حسینی'],
-            ['id' => 3, 'name' => 'رضا احمدی'],
-        ];
-
+        $sellers = Seller::where('user_id', Auth::id())->get();
         return inertia('Prices/Index', compact('sellers'));
     }
 
