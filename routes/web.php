@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ContactsController;
 use App\Http\Controllers\DefaultMessageController;
+use App\Http\Controllers\PriceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TelegramController;
@@ -65,6 +66,8 @@ Route::middleware('auth')->group(function () {
 
     // Robot Default message Routes
     Route::resource('/default/messages', DefaultMessageController::class)->except(['index', 'show', 'edit']);
+
+    Route::resource('/prices', PriceController::class);
 });
 
 
