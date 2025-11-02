@@ -56,6 +56,23 @@ export default function SellersTable({ sellers = [] }) {
         }
     };
 
+    // Remove a code column
+    const removeCodeColumn = (codeId) => {
+        // Remove code from codes array
+        setCodes((prev) => prev.filter((c) => c.id !== codeId));
+
+        // Remove prices associated with this code for all sellers
+        setPrices((prev) => {
+            const updated = { ...prev };
+            Object.keys(updated).forEach((sellerId) => {
+                if (updated[sellerId][codeId] !== undefined) {
+                    delete updated[sellerId][codeId];
+                }
+            });
+            return updated;
+        });
+    };
+
     return (
         <AuthenticatedLayout title="لیست فروشنده‌ها و قیمت‌ها">
             <Head title="قیمت‌ها" />
@@ -95,20 +112,34 @@ export default function SellersTable({ sellers = [] }) {
                                     {codes.map((code, idx) => (
                                         <th
                                             key={code.id}
-                                            className="border-b px-2 py-2"
+                                            className="px-1 py-3 text-right"
                                         >
-                                            <input
-                                                type="text"
-                                                placeholder="کد فنی"
-                                                value={code.code}
-                                                onChange={(e) =>
-                                                    handleCodeChange(
-                                                        idx,
-                                                        e.target.value,
-                                                    )
-                                                }
-                                                className="w-full rounded border border-gray-300 px-2 py-1 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-300"
-                                            />
+                                            <div className="flex gap-1">
+                                                <input
+                                                    type="text"
+                                                    placeholder="کد فنی قطعه"
+                                                    value={code.code}
+                                                    onChange={(e) =>
+                                                        handleCodeChange(
+                                                            idx,
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-300"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        removeCodeColumn(
+                                                            code.id,
+                                                        )
+                                                    }
+                                                    className="text-red-600 hover:text-red-800"
+                                                    title="حذف کد"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
                                         </th>
                                     ))}
                                     <th className="border-b px-2 py-2 text-center">
@@ -138,7 +169,6 @@ export default function SellersTable({ sellers = [] }) {
                                                 className="border-b px-2 py-2"
                                             >
                                                 <input
-                                                    type="number"
                                                     placeholder="قیمت"
                                                     value={
                                                         prices[seller.id][
