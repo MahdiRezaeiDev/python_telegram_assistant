@@ -43,7 +43,6 @@ class DashboardController extends Controller
         $total = 0;
 
         foreach ($products as $product) {
-            // 1 برای خود محصول + تعداد مشابه‌هایش
             $total += 1 + $product->simillars->count();
         }
 
