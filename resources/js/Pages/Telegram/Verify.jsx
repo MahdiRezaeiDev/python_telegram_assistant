@@ -97,7 +97,7 @@ export default function Verify() {
 
                         <PrimaryButton
                             disabled={loading}
-                            className="flex w-full justify-center rounded px-4 py-3 font-semibold text-white transition hover:bg-green-600 disabled:cursor-not-allowed disabled:opacity-70"
+                            className="flex w-full justify-center rounded px-4 py-3 font-semibold text-white transition hover:bg-cyan-600 disabled:cursor-not-allowed disabled:opacity-70"
                         >
                             {loading ? 'در حال بررسی...' : 'تایید'}
                         </PrimaryButton>
