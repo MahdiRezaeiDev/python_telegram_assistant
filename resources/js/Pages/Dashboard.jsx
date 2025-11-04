@@ -27,12 +27,17 @@ import {
     YAxis,
 } from 'recharts';
 
-export default function Dashboard({ reports = {} }) {
+export default function Dashboard({
+    totalTodayMessages,
+    totalSavedGoods,
+    is_connected,
+    reports = {},
+}) {
     const kpis = {
-        totalMessages: reports.totalMessages ?? 12456,
-        successfulReplies: reports.successfulReplies ?? 9843,
-        failedReplies: reports.failedReplies ?? 412,
-        activeChats: reports.activeChats ?? 128,
+        totalTodayMessages: totalTodayMessages ?? 12456,
+        totalSavedGoods: totalSavedGoods ?? 9843,
+        is_connected: is_connected ?? 0,
+        activeChats: 128,
     };
 
     const chartData = reports.trend ?? [
@@ -103,11 +108,21 @@ export default function Dashboard({ reports = {} }) {
                 {/* KPI Cards */}
                 <section className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <KpiCard
+                        className="bg-blue-500 text-white"
+                        onClick={toggleAccountStatus}
+                        icon={
+                            <MessageCircleHeart className="h-6 w-6 text-green-700" />
+                        }
+                        title="وضعیت حساب تلگرام"
+                        value={kpis.is_connected}
+                        description="برای توقف و از سر گیری ارسال پیام خودکار روی آیکن کلیک کنید."
+                    />
+                    <KpiCard
                         icon={
                             <MessageSquare className="h-6 w-6 text-sky-500" />
                         }
                         title="کل پیام‌ها"
-                        value={kpis.totalMessages.toLocaleString()}
+                        value={kpis.totalTodayMessages.toLocaleString()}
                         description="تمام پیام‌های پردازش‌شده"
                     />
 
@@ -116,7 +131,7 @@ export default function Dashboard({ reports = {} }) {
                             <CheckCircle2 className="h-6 w-6 text-emerald-500" />
                         }
                         title="کد های ثبت شده"
-                        value={kpis.successfulReplies.toLocaleString()}
+                        value={kpis.totalSavedGoods.toLocaleString()}
                         description="مجموع کدهای ثبت شده شما"
                     />
 
@@ -125,19 +140,8 @@ export default function Dashboard({ reports = {} }) {
                             <MessageCircleReply className="h-6 w-6 text-cyan-500" />
                         }
                         title="پیام های امروز"
-                        value={kpis.failedReplies.toLocaleString()}
+                        value={kpis.totalTodayMessages}
                         description="پیام‌های دریافتی امروز شما"
-                    />
-
-                    <KpiCard
-                        className="bg-blue-500 text-white"
-                        onClick={toggleAccountStatus}
-                        icon={
-                            <MessageCircleHeart className="h-6 w-6 text-green-700" />
-                        }
-                        title="وضعیت حساب تلگرام"
-                        value="1"
-                        description="برای توقف و از سر گیری ارسال پیام خودکار روی آیکن کلیک کنید."
                     />
                 </section>
 

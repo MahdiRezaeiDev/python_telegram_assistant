@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ContactsController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DefaultMessageController;
 use App\Http\Controllers\PriceController;
 use App\Http\Controllers\ProductController;
@@ -13,17 +14,13 @@ use Inertia\Inertia;
 
 
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/products/downloadSample', [ProductController::class, 'downloadSample'])->name('products.downloadSample');
 
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', function () {
-        return Inertia::render('Dashboard');
-    });
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('/users', UserController::class)->except('show');
 
