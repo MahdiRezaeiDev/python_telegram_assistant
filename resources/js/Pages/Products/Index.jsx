@@ -107,7 +107,7 @@ export default function ProductIndex() {
             <Toaster richColors />
 
             <div className="container mx-auto p-6">
-                <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
+                <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-gray-200">
                     <div className="mb-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
                         <h1 className="text-2xl font-bold text-gray-800">
                             📦 لیست محصولات
@@ -158,227 +158,209 @@ export default function ProductIndex() {
                     </div>
 
                     {/* 🧾 Table */}
-                    <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
-                        <table className="min-w-full divide-y divide-gray-200 text-sm">
-                            <thead className="bg-cyan-700 text-white">
-                                <tr>
-                                    <th className="px-3 py-2 text-center">#</th>
-                                    <th className="px-3 py-2 text-right">
-                                        کد فنی
-                                    </th>
-                                    <th className="px-3 py-2 text-right">
-                                        مشابه‌ها
-                                    </th>
-                                    <th className="px-3 py-2 text-right">
-                                        برند
-                                    </th>
-                                    <th className="px-3 py-2 text-right">
-                                        قیمت
-                                    </th>
-                                    <th className="px-3 py-2 text-right">
-                                        توضیحات
-                                    </th>
-                                    <th className="px-3 py-2 text-center">
-                                        بدون قیمت
-                                    </th>
-                                    <th className="px-3 py-2 text-center">
-                                        اجازه ربات
-                                    </th>
-                                    <th className="px-3 py-2 text-center">
-                                        اقدامات
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-100">
-                                {products.data.length > 0 ? (
-                                    products.data.map((product, i) => (
-                                        <tr
-                                            key={product.id}
-                                            className={`transition hover:bg-gray-50 ${
-                                                editing.id === product.id
-                                                    ? 'bg-yellow-50'
-                                                    : ''
-                                            }`}
-                                        >
-                                            <td className="px-4 py-2 text-center text-gray-600">
-                                                {products.from + i}
-                                            </td>
-                                            <td className="px-4 py-2 font-mono text-gray-800">
-                                                {product.code}
-                                            </td>
-                                            <td className="px-4 py-2">
-                                                <div className="flex flex-wrap gap-1">
-                                                    {product.simillars.map(
-                                                        (sim) => (
-                                                            <span
-                                                                key={sim.id}
-                                                                className="rounded bg-gray-200 px-2 py-0.5 text-xs"
-                                                            >
-                                                                {
-                                                                    sim.similar_code
-                                                                }
-                                                            </span>
-                                                        ),
-                                                    )}
-                                                </div>
-                                            </td>
-
-                                            {/* Editable brand */}
-                                            <td
-                                                className="cursor-pointer px-4 py-2"
-                                                onDoubleClick={() =>
-                                                    handleDoubleClick(
-                                                        product.id,
-                                                        'brand',
-                                                        product.brand || '',
-                                                    )
-                                                }
-                                            >
-                                                {editing.id === product.id &&
-                                                editing.field === 'brand' ? (
-                                                    <input
-                                                        type="text"
-                                                        value={editing.value}
-                                                        onChange={
-                                                            handleEditChange
-                                                        }
-                                                        onBlur={handleBlur}
-                                                        autoFocus
-                                                        className="w-full rounded border px-2 py-1 text-sm"
-                                                    />
-                                                ) : (
-                                                    product.brand || '-'
+                    <table className="min-w-full divide-y divide-gray-200 text-sm">
+                        <thead className="bg-cyan-700 text-white">
+                            <tr>
+                                <th className="px-3 py-2 text-center">#</th>
+                                <th className="px-3 py-2 text-right">کد فنی</th>
+                                <th className="px-3 py-2 text-right">
+                                    مشابه‌ها
+                                </th>
+                                <th className="px-3 py-2 text-right">برند</th>
+                                <th className="px-3 py-2 text-right">قیمت</th>
+                                <th className="px-3 py-2 text-right">
+                                    توضیحات
+                                </th>
+                                <th className="px-3 py-2 text-center">
+                                    بدون قیمت
+                                </th>
+                                <th className="px-3 py-2 text-center">
+                                    اجازه ربات
+                                </th>
+                                <th className="px-3 py-2 text-center">
+                                    اقدامات
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            {products.data.length > 0 ? (
+                                products.data.map((product, i) => (
+                                    <tr
+                                        key={product.id}
+                                        className={`transition hover:bg-gray-50 ${
+                                            editing.id === product.id
+                                                ? 'bg-yellow-50'
+                                                : ''
+                                        }`}
+                                    >
+                                        <td className="px-4 py-2 text-center text-gray-600">
+                                            {products.from + i}
+                                        </td>
+                                        <td className="px-4 py-2 font-mono text-gray-800">
+                                            {product.code}
+                                        </td>
+                                        <td className="px-4 py-2">
+                                            <div className="flex flex-wrap gap-1">
+                                                {product.simillars.map(
+                                                    (sim) => (
+                                                        <span
+                                                            key={sim.id}
+                                                            className="rounded bg-gray-200 px-2 py-0.5 text-xs"
+                                                        >
+                                                            {sim.similar_code}
+                                                        </span>
+                                                    ),
                                                 )}
-                                            </td>
+                                            </div>
+                                        </td>
 
-                                            {/* Editable price */}
-                                            <td
-                                                className="cursor-pointer px-4 py-2 text-center"
-                                                onDoubleClick={() =>
-                                                    handleDoubleClick(
-                                                        product.id,
-                                                        'price',
-                                                        product.price || '',
-                                                    )
-                                                }
-                                            >
-                                                {editing.id === product.id &&
-                                                editing.field === 'price' ? (
-                                                    <input
-                                                        type="number"
-                                                        value={editing.value}
-                                                        onChange={
-                                                            handleEditChange
-                                                        }
-                                                        onBlur={handleBlur}
-                                                        autoFocus
-                                                        className="w-full rounded border px-2 py-1 text-center text-sm"
-                                                    />
-                                                ) : (
-                                                    product.price || '-'
-                                                )}
-                                            </td>
-
-                                            {/* Editable description */}
-                                            <td
-                                                className="cursor-pointer px-4 py-2"
-                                                onDoubleClick={() =>
-                                                    handleDoubleClick(
-                                                        product.id,
-                                                        'description',
-                                                        product.description ||
-                                                            '',
-                                                    )
-                                                }
-                                            >
-                                                {editing.id === product.id &&
-                                                editing.field ===
-                                                    'description' ? (
-                                                    <input
-                                                        type="text"
-                                                        value={editing.value}
-                                                        onChange={
-                                                            handleEditChange
-                                                        }
-                                                        onBlur={handleBlur}
-                                                        autoFocus
-                                                        className="w-full rounded border px-2 py-1 text-sm"
-                                                    />
-                                                ) : (
-                                                    product.description || '-'
-                                                )}
-                                            </td>
-
-                                            <td className="px-4 py-2 text-center">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={
-                                                        !!product.without_price
-                                                    }
-                                                    onChange={(e) =>
-                                                        handleChange(
-                                                            product.id,
-                                                            'without_price',
-                                                            e.target.checked
-                                                                ? 1
-                                                                : 0,
-                                                        )
-                                                    }
-                                                />
-                                            </td>
-                                            <td className="px-4 py-2 text-center">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={
-                                                        !!product.is_bot_allowed
-                                                    }
-                                                    onChange={(e) =>
-                                                        handleChange(
-                                                            product.id,
-                                                            'is_bot_allowed',
-                                                            e.target.checked
-                                                                ? 1
-                                                                : 0,
-                                                        )
-                                                    }
-                                                />
-                                            </td>
-
-                                            <td className="px-4 py-2 text-center">
-                                                <div className="flex justify-center gap-2">
-                                                    <Edit
-                                                        className="h-5 w-5 cursor-pointer text-sky-700 hover:text-sky-900"
-                                                        onClick={() =>
-                                                            toast.info(
-                                                                'در حال توسعه...',
-                                                            )
-                                                        }
-                                                    />
-                                                    <Trash
-                                                        className="h-5 w-5 cursor-pointer text-rose-600 hover:text-rose-800"
-                                                        onClick={() =>
-                                                            confirmDeleting(
-                                                                product.id,
-                                                            )
-                                                        }
-                                                    />
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
+                                        {/* Editable brand */}
                                         <td
-                                            colSpan="9"
-                                            className="py-6 text-center text-gray-500"
+                                            className="cursor-pointer px-4 py-2"
+                                            onDoubleClick={() =>
+                                                handleDoubleClick(
+                                                    product.id,
+                                                    'brand',
+                                                    product.brand || '',
+                                                )
+                                            }
                                         >
-                                            هیچ محصولی یافت نشد 🙁
+                                            {editing.id === product.id &&
+                                            editing.field === 'brand' ? (
+                                                <input
+                                                    type="text"
+                                                    value={editing.value}
+                                                    onChange={handleEditChange}
+                                                    onBlur={handleBlur}
+                                                    autoFocus
+                                                    className="w-full rounded border px-2 py-1 text-sm"
+                                                />
+                                            ) : (
+                                                product.brand || '-'
+                                            )}
+                                        </td>
+
+                                        {/* Editable price */}
+                                        <td
+                                            className="cursor-pointer px-4 py-2 text-center"
+                                            onDoubleClick={() =>
+                                                handleDoubleClick(
+                                                    product.id,
+                                                    'price',
+                                                    product.price || '',
+                                                )
+                                            }
+                                        >
+                                            {editing.id === product.id &&
+                                            editing.field === 'price' ? (
+                                                <input
+                                                    type="number"
+                                                    value={editing.value}
+                                                    onChange={handleEditChange}
+                                                    onBlur={handleBlur}
+                                                    autoFocus
+                                                    className="w-full rounded border px-2 py-1 text-center text-sm"
+                                                />
+                                            ) : (
+                                                product.price || '-'
+                                            )}
+                                        </td>
+
+                                        {/* Editable description */}
+                                        <td
+                                            className="cursor-pointer px-4 py-2"
+                                            onDoubleClick={() =>
+                                                handleDoubleClick(
+                                                    product.id,
+                                                    'description',
+                                                    product.description || '',
+                                                )
+                                            }
+                                        >
+                                            {editing.id === product.id &&
+                                            editing.field === 'description' ? (
+                                                <input
+                                                    type="text"
+                                                    value={editing.value}
+                                                    onChange={handleEditChange}
+                                                    onBlur={handleBlur}
+                                                    autoFocus
+                                                    className="w-full rounded border px-2 py-1 text-sm"
+                                                />
+                                            ) : (
+                                                product.description || '-'
+                                            )}
+                                        </td>
+
+                                        <td className="px-4 py-2 text-center">
+                                            <input
+                                                type="checkbox"
+                                                checked={
+                                                    !!product.without_price
+                                                }
+                                                onChange={(e) =>
+                                                    handleChange(
+                                                        product.id,
+                                                        'without_price',
+                                                        e.target.checked
+                                                            ? 1
+                                                            : 0,
+                                                    )
+                                                }
+                                            />
+                                        </td>
+                                        <td className="px-4 py-2 text-center">
+                                            <input
+                                                type="checkbox"
+                                                checked={
+                                                    !!product.is_bot_allowed
+                                                }
+                                                onChange={(e) =>
+                                                    handleChange(
+                                                        product.id,
+                                                        'is_bot_allowed',
+                                                        e.target.checked
+                                                            ? 1
+                                                            : 0,
+                                                    )
+                                                }
+                                            />
+                                        </td>
+
+                                        <td className="px-4 py-2 text-center">
+                                            <div className="flex justify-center gap-2">
+                                                <Edit
+                                                    className="h-5 w-5 cursor-pointer text-sky-700 hover:text-sky-900"
+                                                    onClick={() =>
+                                                        toast.info(
+                                                            'در حال توسعه...',
+                                                        )
+                                                    }
+                                                />
+                                                <Trash
+                                                    className="h-5 w-5 cursor-pointer text-rose-600 hover:text-rose-800"
+                                                    onClick={() =>
+                                                        confirmDeleting(
+                                                            product.id,
+                                                        )
+                                                    }
+                                                />
+                                            </div>
                                         </td>
                                     </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td
+                                        colSpan="9"
+                                        className="py-6 text-center text-gray-500"
+                                    >
+                                        هیچ محصولی یافت نشد 🙁
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
 
                     {/* Pagination */}
                     {products.links.length > 3 && (

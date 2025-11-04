@@ -166,8 +166,8 @@ export default function Sidebar() {
                         </li>
                         <li>
                             <NavLink
-                                href={route('prices.create')}
-                                active={route().current('prices.create')}
+                                href={route('prices.index')}
+                                active={route().current('prices.index')}
                             >
                                 <div className="flex items-end gap-2">
                                     <Rotate3D className="h-5 w-5" />
@@ -177,8 +177,8 @@ export default function Sidebar() {
                         </li>
                         <li>
                             <NavLink
-                                href={route('prices.create')}
-                                active={route().current('prices.create')}
+                                href={route('sellers.index')}
+                                active={route().current('sellers.index')}
                             >
                                 <div className="flex items-end gap-2">
                                     <CreditCard className="h-5 w-5" />
