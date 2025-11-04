@@ -11,9 +11,9 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import {
     Activity,
-    AlertTriangle,
     CheckCircle2,
     MessageCircleHeart,
+    MessageCircleReply,
     MessageSquare,
     Search,
 } from 'lucide-react';
@@ -115,18 +115,18 @@ export default function Dashboard({ reports = {} }) {
                         icon={
                             <CheckCircle2 className="h-6 w-6 text-emerald-500" />
                         }
-                        title="پاسخ‌های موفق"
+                        title="کد های ثبت شده"
                         value={kpis.successfulReplies.toLocaleString()}
-                        description="پیام‌های پاسخ داده‌شده"
+                        description="مجموع کدهای ثبت شده شما"
                     />
 
                     <KpiCard
                         icon={
-                            <AlertTriangle className="h-6 w-6 text-orange-500" />
+                            <MessageCircleReply className="h-6 w-6 text-cyan-500" />
                         }
-                        title="خطاها"
+                        title="پیام های امروز"
                         value={kpis.failedReplies.toLocaleString()}
-                        description="پیام‌های ناموفق"
+                        description="پیام‌های دریافتی امروز شما"
                     />
 
                     <KpiCard
@@ -135,7 +135,7 @@ export default function Dashboard({ reports = {} }) {
                         icon={
                             <MessageCircleHeart className="h-6 w-6 text-green-700" />
                         }
-                        title="ضعیت حساب تلگرام"
+                        title="وضعیت حساب تلگرام"
                         value="1"
                         description="برای توقف و از سر گیری ارسال پیام خودکار روی آیکن کلیک کنید."
                     />
