@@ -9,14 +9,17 @@ import {
 } from '@/components/ui/card';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
+import axios from 'axios';
 import {
     Activity,
     CheckCircle2,
     MessageCircleHeart,
+    MessageCircleOff,
     MessageCircleReply,
     MessageSquare,
     Search,
 } from 'lucide-react';
+import { useState } from 'react';
 import {
     CartesianGrid,
     Line,
@@ -26,6 +29,7 @@ import {
     XAxis,
     YAxis,
 } from 'recharts';
+import { toast, Toaster } from 'sonner';
 
 export default function Dashboard({
     totalTodayMessages,
@@ -33,6 +37,8 @@ export default function Dashboard({
     is_connected,
     reports = {},
 }) {
+    const [status, setStatus] = useState(is_connected);
+
     const kpis = {
         totalTodayMessages: totalTodayMessages ?? 12456,
         totalSavedGoods: totalSavedGoods ?? 9843,
@@ -73,13 +79,27 @@ export default function Dashboard({
         },
     ];
 
-    const toggleAccountStatus = () => {
-        console.log('Here');
+    const toggleAccountStatus = async () => {
+        const res = await axios.post(route('toggleConnection'));
+        setStatus(res.data.status);
+        toast.success('عملیات موفقانه انجام شد.', {
+            description: 'اطلاعات حساب شما با موفقیت به‌روزرسانی شد.',
+            position: 'bottom-left',
+            duration: 4000,
+            style: {
+                backgroundColor: 'seagreen',
+                fontFamily: 'Vazir',
+                color: 'white',
+                fontWeight: 'bold',
+            },
+        });
     };
 
     return (
         <AuthenticatedLayout title="داشبورد">
             <Head title="داشبورد" />
+            {/* 🔔 Sonner Toaster */}
+            <Toaster richColors />
 
             <main className="flex-1 p-6">
                 {/* Header */}
@@ -99,7 +119,10 @@ export default function Dashboard({
                                 className="w-56 rounded-lg border border-slate-200 bg-white py-2 pl-8 pr-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-sky-200"
                             />
                         </div>
-                        <SecondaryButton className="bg-teal-700">
+                        <SecondaryButton
+                            onClick={toggleAccountStatus}
+                            className="bg-teal-700"
+                        >
                             توقف ارسال پیام
                         </SecondaryButton>
                     </div>
@@ -108,15 +131,22 @@ export default function Dashboard({
                 {/* KPI Cards */}
                 <section className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <KpiCard
-                        className="bg-blue-500 text-white"
-                        onClick={toggleAccountStatus}
                         icon={
-                            <MessageCircleHeart className="h-6 w-6 text-green-700" />
+                            Number(status) === 1 ? (
+                                <MessageCircleHeart className="h-6 w-6 text-green-700" />
+                            ) : (
+                                <MessageCircleOff className="h-6 w-6 text-orange-700" />
+                            )
                         }
                         title="وضعیت حساب تلگرام"
-                        value={kpis.is_connected}
-                        description="برای توقف و از سر گیری ارسال پیام خودکار روی آیکن کلیک کنید."
+                        value={status ? 'متصل' : 'قطع'}
+                        description={
+                            Number(status) === 1
+                                ? 'حساب شما متصل هست به اکانت تلگرام تان'
+                                : 'حساب شما متصل نیست به اکانت تلگرام تان'
+                        }
                     />
+
                     <KpiCard
                         icon={
                             <MessageSquare className="h-6 w-6 text-sky-500" />

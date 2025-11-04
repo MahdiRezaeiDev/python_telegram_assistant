@@ -5,9 +5,11 @@ import {
     ChevronDown,
     Coins,
     Contact,
+    CreditCard,
     LayoutDashboard,
     MenuIcon,
     MessageSquareCode,
+    Rotate3D,
     User,
     Users,
 } from 'lucide-react';
@@ -159,6 +161,28 @@ export default function Sidebar() {
                                 <div className="flex items-end gap-2">
                                     <Coins className="h-5 w-5" />
                                     <span>ثبت قیمت بازار</span>
+                                </div>
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink
+                                href={route('prices.create')}
+                                active={route().current('prices.create')}
+                            >
+                                <div className="flex items-end gap-2">
+                                    <Rotate3D className="h-5 w-5" />
+                                    <span>قیمت های گرفته شده</span>
+                                </div>
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink
+                                href={route('prices.create')}
+                                active={route().current('prices.create')}
+                            >
+                                <div className="flex items-end gap-2">
+                                    <CreditCard className="h-5 w-5" />
+                                    <span>فروشنده های ثبت شده</span>
                                 </div>
                             </NavLink>
                         </li>

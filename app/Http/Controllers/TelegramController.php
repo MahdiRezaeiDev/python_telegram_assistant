@@ -50,7 +50,6 @@ class TelegramController extends Controller
         return Inertia::render('Telegram/MyGroups');
     }
 
-
     public function getMyGroups()
     {
         $response = Http::post('http://127.0.0.1:5000/api/telegram/my-groups', [
@@ -91,7 +90,6 @@ class TelegramController extends Controller
         return $response->json();
     }
 
-
     public function verify()
     {
         return Inertia::render('Telegram/Verify');
@@ -120,7 +118,6 @@ class TelegramController extends Controller
         return $response->json();
     }
 
-
     public function password()
     {
         return Inertia::render('Telegram/Password');
@@ -141,7 +138,6 @@ class TelegramController extends Controller
         return $response->json();
     }
 
-
     public function sendMessage(Request $request)
     {
         $request->validate([
@@ -152,5 +148,23 @@ class TelegramController extends Controller
         // Call Python API
         $response = Http::post('http://127.0.0.1:5000/send_message', $request->all());
         return $response->json();
+    }
+
+
+    public function toggleConnection()
+    {
+        // Get the user's telegram account
+        $account = TelegramAccount::where('user_id', Auth::id())->firstOrFail();
+
+        // Toggle the is_logged_in field
+        $account->is_logged_in = $account->is_logged_in ? 0 : 1;
+        $account->save();
+
+        // Optionally return a response (for AJAX/axios)
+        return response()->json([
+            'success' => true,
+            'is_logged_in' => $account->is_logged_in,
+            'status' => $account->is_logged_in
+        ]);
     }
 }

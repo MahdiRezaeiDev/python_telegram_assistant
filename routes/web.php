@@ -50,6 +50,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/verify', [TelegramController::class, 'verifyCode'])->name('verifyAccount');
         Route::post('/verifyPassword', [TelegramController::class, 'verifyPassword'])->name('verifyAccountPassword');
         Route::post('/send-message', [TelegramController::class, 'sendMessage'])->name('sendMessage');
+
+        Route::post('/toggle-connection', [TelegramController::class, 'toggleConnection'])->name('toggleConnection');
     });
 
     // Group contacts related routes
