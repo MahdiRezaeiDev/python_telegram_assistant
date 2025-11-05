@@ -82,6 +82,7 @@ Route::middleware('auth')->group(function () {
 
 
     Route::get('/responses', [ResponseController::class, 'index'])->name('response.index');
+    Route::post('/responses', [ResponseController::class, 'getResponse'])->name('response.get');
 });
 
 

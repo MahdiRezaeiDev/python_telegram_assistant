@@ -11,4 +11,9 @@ class ResponseController extends Controller
     {
         return Inertia::render('Response/Index');
     }
+
+
+    public function getResponse() {
+        $response
+    }
 }

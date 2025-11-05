@@ -1,3 +1,4 @@
+import telegram from '@/img/telegram.svg';
 import Wallpaper from '@/img/wallpaper.jpg';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
@@ -27,9 +28,10 @@ export default function TelegramChat() {
     const [isLoading, setIsLoading] = useState(true);
     const chatEndRef = useRef(null);
 
+    // Fetch messages from backend
     const fetchMessages = async () => {
         try {
-            const res = await axios.get('/api/messages');
+            const res = await axios.get(route('response.get'));
             setMessages(res.data);
         } catch (error) {
             console.error('Error fetching messages:', error);
@@ -56,14 +58,14 @@ export default function TelegramChat() {
     };
 
     return (
-        <AuthenticatedLayout title="پیلم های گروه">
-            <Head title="پیلم های گروه" />
+        <AuthenticatedLayout title="پیام‌های گروه">
+            <Head title="پیام‌های گروه" />
             <div className="mx-auto flex h-screen max-w-2xl flex-col bg-gray-100">
                 {/* Header */}
                 <div className="flex items-center justify-between border-b bg-white/90 p-3 shadow backdrop-blur-sm">
                     <div className="flex items-center gap-2">
                         <img
-                            src="/telegram-icon.png"
+                            src={telegram}
                             alt="Telegram"
                             className="h-8 w-8 rounded-full"
                         />
@@ -73,63 +75,69 @@ export default function TelegramChat() {
                     </div>
                 </div>
 
-                {/* Chat messages */}
+                {/* Chat messages with wallpaper overlay */}
                 <div
-                    className="flex-1 space-y-3 overflow-y-auto p-4"
+                    className="relative flex-1 overflow-y-auto p-4"
                     style={{
-                        backgroundColor: '#e3f2fd',
                         backgroundImage: `url(${Wallpaper})`,
                         backgroundRepeat: 'repeat',
                         backgroundSize: 'auto',
+                        backgroundColor: '#e3f2fd',
                     }}
                 >
-                    {isLoading ? (
-                        <div className="flex h-full items-center justify-center text-gray-500">
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                            در حال بارگذاری پیام‌ها...
-                        </div>
-                    ) : messages.length === 0 ? (
-                        <div className="flex h-full items-center justify-center text-gray-400">
-                            پیامی وجود ندارد
-                        </div>
-                    ) : (
-                        messages.map((msg) => (
-                            <div
-                                key={msg.id}
-                                className={`flex ${
-                                    msg.is_outgoing
-                                        ? 'justify-end'
-                                        : 'justify-start'
-                                }`}
-                            >
-                                <div
-                                    className={`max-w-xs rounded-2xl px-4 py-2 shadow md:max-w-md ${
-                                        msg.is_outgoing
-                                            ? 'rounded-br-none bg-blue-500/90 text-white'
-                                            : 'rounded-bl-none bg-white/80 text-gray-800'
-                                    } backdrop-blur-sm`}
-                                >
-                                    {!msg.is_outgoing && (
-                                        <p className="text-sm font-semibold text-gray-600">
-                                            {msg.sender_name || msg.sender}
-                                        </p>
-                                    )}
-                                    <p className="whitespace-pre-wrap">
-                                        {msg.message}
-                                    </p>
-                                    <p className="mt-1 text-right text-xs text-gray-500">
-                                        {new Date(
-                                            msg.created_at,
-                                        ).toLocaleTimeString([], {
-                                            hour: '2-digit',
-                                            minute: '2-digit',
-                                        })}
-                                    </p>
-                                </div>
+                    {/* Subtle overlay for readability */}
+                    <div className="backdrop-blur-xs absolute inset-0 bg-white/20"></div>
+
+                    {/* Messages content */}
+                    <div className="relative space-y-3">
+                        {isLoading ? (
+                            <div className="flex h-full items-center justify-center text-gray-500">
+                                <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                                در حال بارگذاری پیام‌ها...
                             </div>
-                        ))
-                    )}
-                    <div ref={chatEndRef}></div>
+                        ) : messages.length === 0 ? (
+                            <div className="flex h-full items-center justify-center text-gray-400">
+                                پیامی وجود ندارد
+                            </div>
+                        ) : (
+                            messages.map((msg) => (
+                                <div
+                                    key={msg.id}
+                                    className={`flex ${
+                                        msg.is_outgoing
+                                            ? 'justify-end'
+                                            : 'justify-start'
+                                    }`}
+                                >
+                                    <div
+                                        className={`max-w-xs rounded-2xl px-4 py-2 shadow-md transition md:max-w-md ${
+                                            msg.is_outgoing
+                                                ? 'rounded-br-none bg-blue-500 text-white shadow-blue-100'
+                                                : 'rounded-bl-none bg-white/80 text-gray-800 shadow-gray-200'
+                                        }`}
+                                    >
+                                        {!msg.is_outgoing && (
+                                            <p className="text-sm font-semibold text-gray-600">
+                                                {msg.sender_name || msg.sender}
+                                            </p>
+                                        )}
+                                        <p className="whitespace-pre-wrap">
+                                            {msg.message}
+                                        </p>
+                                        <p className="mt-1 text-right text-xs text-gray-500">
+                                            {new Date(
+                                                msg.created_at,
+                                            ).toLocaleTimeString([], {
+                                                hour: '2-digit',
+                                                minute: '2-digit',
+                                            })}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                        <div ref={chatEndRef}></div>
+                    </div>
                 </div>
 
                 {/* Input area */}

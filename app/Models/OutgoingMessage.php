@@ -12,4 +12,9 @@ class OutgoingMessage extends Model
         'response',
         'user_id'
     ];
+
+    public function incoming()
+    {
+        return $this->belongsTo(IncomingMessage::class);
+    }
 }
