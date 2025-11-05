@@ -6,6 +6,7 @@ use App\Http\Controllers\DefaultMessageController;
 use App\Http\Controllers\PriceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ResponseController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\UserController;
@@ -78,6 +79,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/sellers/{seller}', [SellerController::class, 'update'])->name('sellers.update');
     Route::delete('/sellers/{seller}', [SellerController::class, 'destroy'])->name('sellers.destroy');
     Route::post('/sellers/{seller}/toggle-view', [SellerController::class, 'toggleView'])->name('sellers.toggleView');
+
+
+    Route::get('/responses', [ResponseController::class, 'index'])->name('response.index');
 });
 
 
