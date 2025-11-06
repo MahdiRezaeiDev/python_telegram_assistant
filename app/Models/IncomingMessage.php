@@ -12,4 +12,14 @@ class IncomingMessage extends Model
         'message',
         'is_resolved'
     ];
+
+    public function outgoing()
+    {
+        return $this->hasMany(OutgoingMessage::class, 'message_id');
+    }
+
+    public function sender()
+    {
+        return $this->belongsTo(TelegramContacts::class, 'sender', 'api_bot_id');
+    }
 }

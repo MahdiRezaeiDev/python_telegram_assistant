@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('receiver');
             $table->string('response');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('message_id')->constrained('incoming_messages')->onDelete('cascade');
             $table->timestamps();
         });
     }

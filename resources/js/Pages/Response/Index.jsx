@@ -3,27 +3,11 @@ import Wallpaper from '@/img/wallpaper.jpg';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
-import { Loader2, Send } from 'lucide-react';
+import { Loader2, Send, User } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 export default function TelegramChat() {
-    const [messages, setMessages] = useState([
-        {
-            id: 1,
-            sender: '123456789',
-            sender_name: 'Mahdi',
-            message: 'Hello everyone!',
-            is_outgoing: false,
-            created_at: '2025-11-05T16:20:00',
-        },
-        {
-            id: 2,
-            sender: 'me',
-            message: 'Hi!',
-            is_outgoing: true,
-            created_at: '2025-11-05T16:21:00',
-        },
-    ]);
+    const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const chatEndRef = useRef(null);
@@ -31,7 +15,7 @@ export default function TelegramChat() {
     // Fetch messages from backend
     const fetchMessages = async () => {
         try {
-            const res = await axios.get(route('response.get'));
+            const res = await axios.post(route('response.get'));
             setMessages(res.data);
         } catch (error) {
             console.error('Error fetching messages:', error);
@@ -75,7 +59,7 @@ export default function TelegramChat() {
                     </div>
                 </div>
 
-                {/* Chat messages with wallpaper overlay */}
+                {/* Chat area */}
                 <div
                     className="relative flex-1 overflow-y-auto p-4"
                     style={{
@@ -85,10 +69,10 @@ export default function TelegramChat() {
                         backgroundColor: '#e3f2fd',
                     }}
                 >
-                    {/* Subtle overlay for readability */}
-                    <div className="backdrop-blur-xs absolute inset-0 bg-white/20"></div>
+                    {/* Overlay for readability */}
+                    <div className="absolute inset-0 bg-white/30 backdrop-blur-[1px]" />
 
-                    {/* Messages content */}
+                    {/* Messages */}
                     <div className="relative space-y-3">
                         {isLoading ? (
                             <div className="flex h-full items-center justify-center text-gray-500">
@@ -100,47 +84,80 @@ export default function TelegramChat() {
                                 پیامی وجود ندارد
                             </div>
                         ) : (
-                            messages.map((msg) => (
-                                <div
-                                    key={msg.id}
-                                    className={`flex ${
-                                        msg.is_outgoing
-                                            ? 'justify-end'
-                                            : 'justify-start'
-                                    }`}
-                                >
+                            messages.map((msg) => {
+                                const isOutgoing =
+                                    msg.outgoing && msg.outgoing.length > 0;
+
+                                const senderName =
+                                    msg.sender?.full_name ||
+                                    msg.sender?.username ||
+                                    'کاربر ناشناس';
+
+                                const senderPhoto =
+                                    msg.sender?.profile_photo_path || null;
+
+                                return (
                                     <div
-                                        className={`max-w-xs rounded-2xl px-4 py-2 shadow-md transition md:max-w-md ${
-                                            msg.is_outgoing
-                                                ? 'rounded-br-none bg-blue-500 text-white shadow-blue-100'
-                                                : 'rounded-bl-none bg-white/80 text-gray-800 shadow-gray-200'
+                                        key={msg.id}
+                                        className={`flex ${
+                                            isOutgoing
+                                                ? 'justify-end'
+                                                : 'justify-start'
                                         }`}
                                     >
-                                        {!msg.is_outgoing && (
-                                            <p className="text-sm font-semibold text-gray-600">
-                                                {msg.sender_name || msg.sender}
-                                            </p>
+                                        {/* Avatar for incoming messages */}
+                                        {!isOutgoing && (
+                                            <div className="mr-2 mt-auto flex h-8 w-8 items-center justify-center">
+                                                {senderPhoto ? (
+                                                    <img
+                                                        src={senderPhoto}
+                                                        alt={senderName}
+                                                        className="h-8 w-8 rounded-full border border-gray-300 object-cover"
+                                                    />
+                                                ) : (
+                                                    <User className="h-6 w-6 text-gray-500" />
+                                                )}
+                                            </div>
                                         )}
-                                        <p className="whitespace-pre-wrap">
-                                            {msg.message}
-                                        </p>
-                                        <p className="mt-1 text-right text-xs text-gray-500">
-                                            {new Date(
-                                                msg.created_at,
-                                            ).toLocaleTimeString([], {
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                            })}
-                                        </p>
+
+                                        {/* Message bubble */}
+                                        <div
+                                            className={`max-w-xs rounded-2xl px-4 py-2 shadow-md transition md:max-w-md ${
+                                                isOutgoing
+                                                    ? 'rounded-br-none bg-blue-500 text-white shadow-blue-100'
+                                                    : 'rounded-bl-none bg-white/90 text-gray-800 shadow-gray-200'
+                                            }`}
+                                        >
+                                            {!isOutgoing && (
+                                                <p className="text-sm font-semibold text-gray-600">
+                                                    {senderName}
+                                                </p>
+                                            )}
+                                            <p className="whitespace-pre-wrap">
+                                                {isOutgoing
+                                                    ? msg.outgoing[0]?.response
+                                                    : msg.message}
+                                            </p>
+                                            <p className="mt-1 text-right text-xs text-gray-500">
+                                                {msg.created_at
+                                                    ? new Date(
+                                                          msg.created_at,
+                                                      ).toLocaleTimeString([], {
+                                                          hour: '2-digit',
+                                                          minute: '2-digit',
+                                                      })
+                                                    : ''}
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
-                            ))
+                                );
+                            })
                         )}
                         <div ref={chatEndRef}></div>
                     </div>
                 </div>
 
-                {/* Input area */}
+                {/* Input bar */}
                 <div className="flex items-center gap-2 border-t bg-white/90 p-3 backdrop-blur-sm">
                     <input
                         type="text"
