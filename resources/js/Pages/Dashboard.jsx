@@ -1,5 +1,4 @@
 import SecondaryButton from '@/Components/SecondaryButton';
-import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -37,10 +36,9 @@ export default function Dashboard({
     is_connected,
     reports = {},
     responseList,
+    unrespondedMessages,
 }) {
     const [status, setStatus] = useState(is_connected);
-
-    console.log(responseList);
 
     const kpis = {
         totalTodayMessages: totalTodayMessages ?? 12456,
@@ -56,30 +54,6 @@ export default function Dashboard({
         { label: 'تیر', msgs: 900 },
         { label: 'مرداد', msgs: 750 },
         { label: 'شهریور', msgs: 1050 },
-    ];
-
-    const recent = reports.recent ?? [
-        {
-            id: 1,
-            chat: '@ali',
-            message: 'درخواست قیمت 23300-2g410',
-            status: 'reply_sent',
-            time: '1h',
-        },
-        {
-            id: 2,
-            chat: '@sara',
-            message: 'درخواست مشابه 209102gm00',
-            status: 'no_price',
-            time: '2h',
-        },
-        {
-            id: 3,
-            chat: '@reza',
-            message: 'ارسال گزارش فروش',
-            status: 'reply_sent',
-            time: '3h',
-        },
     ];
 
     const toggleAccountStatus = async () => {
@@ -222,14 +196,14 @@ export default function Dashboard({
                         </CardHeader>
                         <CardContent>
                             <div className="max-h-[260px] space-y-3 overflow-auto pr-1">
-                                {recent.map((r) => (
+                                {unrespondedMessages.map((r) => (
                                     <div
                                         key={r.id}
                                         className="rounded-md border border-slate-200 bg-slate-50 p-3 transition hover:bg-white"
                                     >
                                         <div className="flex items-center justify-between">
                                             <div className="text-sm font-medium">
-                                                {r.chat}
+                                                {r.sender.fullname}
                                             </div>
                                             <div className="text-xs text-slate-400">
                                                 {r.time}
@@ -273,7 +247,6 @@ export default function Dashboard({
                                             <th className="py-2">پیام</th>
                                             <th className="py-2">وضعیت</th>
                                             <th className="py-2">قیمت</th>
-                                            <th className="py-2">عملیات</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -292,34 +265,19 @@ export default function Dashboard({
                                                     {r.message}
                                                 </td>
                                                 <td className="py-3 text-right">
-                                                    {r.outgoing ? (
+                                                    {r.outgoing?.[0] ? (
                                                         <span className="font-medium text-emerald-600">
                                                             پاسخ ارسال شد
                                                         </span>
                                                     ) : (
                                                         <span className="font-medium text-orange-600">
-                                                            بدون قیمت
+                                                            پاسخ ارسال نشده
                                                         </span>
                                                     )}
                                                 </td>
                                                 <td className="py-3 text-right">
-                                                    {r.outgoing[0]['response']}
-                                                </td>
-                                                <td className="py-3 text-right">
-                                                    <div className="flex justify-end gap-2">
-                                                        <Button
-                                                            size="sm"
-                                                            variant="outline"
-                                                        >
-                                                            جزئیات
-                                                        </Button>
-                                                        <Button
-                                                            size="sm"
-                                                            variant="ghost"
-                                                        >
-                                                            بازپخش
-                                                        </Button>
-                                                    </div>
+                                                    {r.outgoing?.[0]
+                                                        ?.response || '-'}
                                                 </td>
                                             </tr>
                                         ))}

@@ -18,12 +18,16 @@ class DashboardController extends Controller
         $totalSavedGoods = $this->total_goods();
         $is_connected = $this->isConnected();
         $responseList = $this->responseList();
+        $unrespondedMessages = $this->getUnrespondedMessages();
+
+        
 
         return Inertia::render('Dashboard', [
             'totalTodayMessages' => $totalTodayMessages,
             'totalSavedGoods' => $totalSavedGoods,
             'is_connected' => $is_connected,
-            'responseList' => $responseList
+            'responseList' => $responseList,
+            'unrespondedMessages' => $unrespondedMessages,
         ]);
     }
 
@@ -66,5 +70,16 @@ class DashboardController extends Controller
         )->with('sender')->get();
 
         return $responses;
+    }
+
+    private function getUnrespondedMessages()
+    {
+        $messages = IncomingMessage::with('sender')
+            ->whereDoesntHave('outgoing', function ($query) {
+                $query->where('user_id', Auth::id());
+            })
+            ->get();
+
+        return $messages;
     }
 }
