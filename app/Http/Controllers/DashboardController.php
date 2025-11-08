@@ -17,14 +17,15 @@ class DashboardController extends Controller
         $totalTodayMessages = $this->totalTodayMessages();
         $totalSavedGoods = $this->total_goods();
         $is_connected = $this->isConnected();
+        $responseList = $this->responseList();
 
         return Inertia::render('Dashboard', [
             'totalTodayMessages' => $totalTodayMessages,
             'totalSavedGoods' => $totalSavedGoods,
             'is_connected' => $is_connected,
+            'responseList' => $responseList
         ]);
     }
-
 
     private function isConnected()
     {
@@ -32,7 +33,6 @@ class DashboardController extends Controller
 
         return $account['is_logged_in'];
     }
-
 
     private function total_goods()
     {
@@ -49,9 +49,22 @@ class DashboardController extends Controller
         return $total;
     }
 
-
     private function totalTodayMessages()
     {
         return IncomingMessage::whereDate('created_at', Carbon::today())->count();
+    }
+
+    private function responseList()
+    {
+
+        $responses = IncomingMessage::with(
+            [
+                'outgoing' => function ($query) {
+                    $query->where('user_id', Auth::id());
+                },
+            ]
+        )->with('sender')->get();
+
+        return $responses;
     }
 }

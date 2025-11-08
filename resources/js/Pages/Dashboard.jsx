@@ -36,8 +36,11 @@ export default function Dashboard({
     totalSavedGoods,
     is_connected,
     reports = {},
+    responseList,
 }) {
     const [status, setStatus] = useState(is_connected);
+
+    console.log(responseList);
 
     const kpis = {
         totalTodayMessages: totalTodayMessages ?? 12456,
@@ -269,12 +272,12 @@ export default function Dashboard({
                                             <th className="py-2">چت</th>
                                             <th className="py-2">پیام</th>
                                             <th className="py-2">وضعیت</th>
-                                            <th className="py-2">زمان</th>
+                                            <th className="py-2">قیمت</th>
                                             <th className="py-2">عملیات</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {recent.map((r, i) => (
+                                        {responseList.map((r, i) => (
                                             <tr
                                                 key={r.id}
                                                 className="border-t transition hover:bg-slate-50"
@@ -283,14 +286,13 @@ export default function Dashboard({
                                                     {i + 1}
                                                 </td>
                                                 <td className="py-3 text-right">
-                                                    {r.chat}
+                                                    {r.sender.full_name}
                                                 </td>
                                                 <td className="py-3 text-right">
                                                     {r.message}
                                                 </td>
                                                 <td className="py-3 text-right">
-                                                    {r.status ===
-                                                    'reply_sent' ? (
+                                                    {r.outgoing ? (
                                                         <span className="font-medium text-emerald-600">
                                                             پاسخ ارسال شد
                                                         </span>
@@ -301,7 +303,7 @@ export default function Dashboard({
                                                     )}
                                                 </td>
                                                 <td className="py-3 text-right">
-                                                    {r.time}
+                                                    {r.outgoing[0]['response']}
                                                 </td>
                                                 <td className="py-3 text-right">
                                                     <div className="flex justify-end gap-2">
