@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import axios from 'axios';
 import { Pencil, Trash } from 'lucide-react';
 import { useState } from 'react';
@@ -7,7 +7,6 @@ import { toast, Toaster } from 'sonner';
 
 export default function PricesIndex({ prices: initialPrices }) {
     const [prices, setPrices] = useState(initialPrices.data);
-    const [pagination, setPagination] = useState(initialPrices.meta);
     const [editingPrice, setEditingPrice] = useState(null);
     const [formData, setFormData] = useState({ code: '', price: '' });
     const [loading, setLoading] = useState(false);
@@ -84,6 +83,7 @@ export default function PricesIndex({ prices: initialPrices }) {
                     <table className="min-w-full divide-y divide-gray-200 text-sm">
                         <thead className="bg-gray-100 font-medium text-gray-700">
                             <tr>
+                                <th className="px-4 py-3 text-right">#</th>
                                 <th className="px-4 py-3 text-right">
                                     فروشنده
                                 </th>
@@ -98,11 +98,16 @@ export default function PricesIndex({ prices: initialPrices }) {
                         </thead>
                         <tbody className="divide-y divide-gray-200 bg-white">
                             {prices.length > 0 ? (
-                                prices.map((price) => (
+                                prices.map((price, index) => (
                                     <tr
                                         key={price.id}
                                         className="transition-colors hover:bg-gray-50"
                                     >
+                                        <td className="px-4 py-3 font-medium text-gray-800">
+                                            {(initialPrices.current_page - 1) *
+                                                initialPrices.per_page +
+                                                (index + 1)}
+                                        </td>
                                         <td className="px-4 py-3 font-medium text-gray-800">
                                             {price.seller.full_name}
                                         </td>
@@ -146,6 +151,36 @@ export default function PricesIndex({ prices: initialPrices }) {
                             )}
                         </tbody>
                     </table>
+                    {/* Pagination */}
+                    {initialPrices.links.length > 3 && (
+                        <div className="my-4 flex justify-center">
+                            {initialPrices.links.map((link, idx) => {
+                                let label = link.label;
+
+                                // Convert pagination text to Persian
+                                if (label.includes('Next')) label = 'بعدی';
+                                else if (label.includes('Previous'))
+                                    label = 'قبلی';
+
+                                return (
+                                    <button
+                                        key={idx}
+                                        onClick={() =>
+                                            link.url && router.get(link.url)
+                                        }
+                                        className={`mx-1 rounded px-3 py-1 text-sm ${
+                                            link.active
+                                                ? 'bg-cyan-700 text-white'
+                                                : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                                        } ${!link.url ? 'cursor-not-allowed opacity-50' : ''}`}
+                                        dangerouslySetInnerHTML={{
+                                            __html: label,
+                                        }}
+                                    />
+                                );
+                            })}
+                        </div>
+                    )}
                 </div>
 
                 {/* Edit Modal */}
@@ -190,20 +225,20 @@ export default function PricesIndex({ prices: initialPrices }) {
                                         required
                                     />
                                 </div>
-                                <div className="mt-4 flex justify-end gap-3">
-                                    <button
-                                        type="button"
-                                        onClick={closeEditModal}
-                                        className="rounded-lg bg-gray-300 px-4 py-2 hover:bg-gray-400"
-                                    >
-                                        لغو
-                                    </button>
+                                <div className="mt-4 flex justify-start gap-3">
                                     <button
                                         type="submit"
                                         disabled={loading}
                                         className="rounded-lg bg-sky-600 px-4 py-2 text-white hover:bg-sky-700 disabled:opacity-60"
                                     >
                                         {loading ? 'در حال ذخیره...' : 'ذخیره'}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={closeEditModal}
+                                        className="rounded-lg bg-gray-300 px-4 py-2 hover:bg-gray-400"
+                                    >
+                                        لغو
                                     </button>
                                 </div>
                             </form>
@@ -225,18 +260,18 @@ export default function PricesIndex({ prices: initialPrices }) {
                                 </span>{' '}
                                 را حذف کنید؟
                             </p>
-                            <div className="flex justify-end gap-3">
-                                <button
-                                    onClick={closeDeleteModal}
-                                    className="rounded-lg bg-gray-300 px-4 py-2 hover:bg-gray-400"
-                                >
-                                    لغو
-                                </button>
+                            <div className="flex justify-start gap-3">
                                 <button
                                     onClick={handleDelete}
                                     className="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
                                 >
                                     حذف
+                                </button>
+                                <button
+                                    onClick={closeDeleteModal}
+                                    className="rounded-lg bg-gray-300 px-4 py-2 hover:bg-gray-400"
+                                >
+                                    لغو
                                 </button>
                             </div>
                         </div>

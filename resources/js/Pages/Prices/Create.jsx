@@ -77,6 +77,8 @@ export default function SellersTable({ sellers = [] }) {
                     fontWeight: 'bold',
                 },
             });
+            setCodes([]);
+            setPrices(sellers.reduce((acc, s) => ({ ...acc, [s.id]: {} }), {}));
         } catch (err) {
             console.error(err);
             toast.error('خطا در انجام عملیات', {
