@@ -19,11 +19,12 @@ export default function SellersTable({ sellers = [] }) {
 
     const handleCodeChange = (index, value) => {
         const updated = [...codes];
-        updated[index].code = value;
+        updated[index].code = value.toUpperCase();
         setCodes(updated);
     };
 
     const handlePriceChange = (sellerId, codeId, value) => {
+        value = value.toUpperCase();
         setPrices((prev) => ({
             ...prev,
             [sellerId]: { ...prev[sellerId], [codeId]: value },
@@ -57,7 +58,17 @@ export default function SellersTable({ sellers = [] }) {
             });
         } catch (err) {
             console.error(err);
-            toast.error('خطا در ذخیره قیمت‌ها!', { position: 'bottom-left' });
+            toast.success('خطا در انجام عملیات', {
+                description:
+                    'عملیات ثبت قیمت های بازار ناموفق بود، لطفا بعدا تلاش نمایید.',
+                position: 'bottom-left',
+                style: {
+                    backgroundColor: 'red',
+                    fontFamily: 'Vazir',
+                    color: 'white',
+                    fontWeight: 'bold',
+                },
+            });
         } finally {
             setLoading(false);
         }
@@ -85,7 +96,7 @@ export default function SellersTable({ sellers = [] }) {
             <Toaster richColors />
 
             <div className="min-h-screen bg-gray-50 p-6">
-                <div className="mx-auto w-full max-w-6xl space-y-4">
+                <div className="mx-auto w-full space-y-4">
                     {/* Header & Search */}
                     <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                         <h1 className="text-2xl font-semibold text-gray-800">
@@ -108,7 +119,7 @@ export default function SellersTable({ sellers = [] }) {
                         <table className="min-w-full border-collapse text-sm">
                             <thead className="bg-gray-100 text-gray-700">
                                 <tr>
-                                    <th className="sticky top-0 border-b px-4 py-2 text-right font-medium">
+                                    <th className="sticky top-0 w-52 border-b px-4 py-2 text-right font-semibold">
                                         فروشنده
                                     </th>
                                     {codes.map((code, idx) => (
@@ -127,7 +138,8 @@ export default function SellersTable({ sellers = [] }) {
                                                             e.target.value,
                                                         )
                                                     }
-                                                    className="w-full rounded border border-gray-300 p-2 text-sm text-gray-700 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-300"
+                                                    style={{ direction: 'ltr' }}
+                                                    className="w-32 rounded border border-gray-300 p-2 text-sm text-gray-700 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-300"
                                                 />
                                                 <button
                                                     type="button"
@@ -136,7 +148,7 @@ export default function SellersTable({ sellers = [] }) {
                                                             code.id,
                                                         )
                                                     }
-                                                    className="absolute left-2 top-[6px] text-xl text-red-600 hover:text-red-800"
+                                                    className="absolute right-2 top-[6px] text-xl text-red-600 hover:text-red-800"
                                                     title="حذف کد"
                                                 >
                                                     ×
@@ -172,7 +184,7 @@ export default function SellersTable({ sellers = [] }) {
                                         {codes.map((code) => (
                                             <td
                                                 key={code.id}
-                                                className="border-b px-2 py-2"
+                                                className="w-32 border-b px-2 py-2"
                                             >
                                                 <input
                                                     placeholder="قیمت"
@@ -188,7 +200,8 @@ export default function SellersTable({ sellers = [] }) {
                                                             e.target.value,
                                                         )
                                                     }
-                                                    className="w-full rounded border border-gray-300 p-2 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-300"
+                                                    style={{ direction: 'ltr' }}
+                                                    className="w-32 rounded border border-gray-300 p-2 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-300"
                                                 />
                                             </td>
                                         ))}
