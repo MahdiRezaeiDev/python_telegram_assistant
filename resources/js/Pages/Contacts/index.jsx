@@ -1,6 +1,6 @@
 import PrimaryButton from '@/Components/PrimaryButton';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import { Loader2, Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -11,6 +11,8 @@ export default function Index({ contacts }) {
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(false);
     const [blockLoadingId, setBlockLoadingId] = useState(null);
+    const { auth } = usePage().props;
+    const role = auth.user.role;
 
     // 🔄 Load all contacts
     const loadContacts = async () => {
@@ -109,20 +111,22 @@ export default function Index({ contacts }) {
                                 />
                                 <Search className="absolute left-2 top-2 h-4 w-4 text-gray-400" />
                             </div>
-                            <PrimaryButton
-                                onClick={loadContacts}
-                                disabled={loading}
-                                className="flex items-center gap-2 rounded bg-cyan-700 px-4 py-2 text-xs font-bold text-white hover:shadow-md disabled:opacity-60"
-                            >
-                                {loading ? (
-                                    <>
-                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                        در حال بارگیری...
-                                    </>
-                                ) : (
-                                    'بارگیری مخاطبین'
-                                )}
-                            </PrimaryButton>
+                            {role === 'admin' && (
+                                <PrimaryButton
+                                    onClick={loadContacts}
+                                    disabled={loading}
+                                    className="flex items-center gap-2 rounded bg-cyan-700 px-4 py-2 text-xs font-bold text-white hover:shadow-md disabled:opacity-60"
+                                >
+                                    {loading ? (
+                                        <>
+                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                            در حال بارگیری...
+                                        </>
+                                    ) : (
+                                        'بارگیری مخاطبین'
+                                    )}
+                                </PrimaryButton>
+                            )}
                         </div>
 
                         {/* Table */}

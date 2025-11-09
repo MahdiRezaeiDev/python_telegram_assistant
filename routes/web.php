@@ -11,8 +11,6 @@ use App\Http\Controllers\SellerController;
 use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
-
 
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
@@ -23,7 +21,7 @@ Route::get('/products/downloadSample', [ProductController::class, 'downloadSampl
 Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::resource('/users', UserController::class)->except('show');
+    Route::middleware('role:admin')->resource('/users', UserController::class)->except('show');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

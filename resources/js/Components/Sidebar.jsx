@@ -20,6 +20,7 @@ import NavLink from './NavLink';
 export default function Sidebar() {
     const { auth } = usePage().props;
     const user = auth.user;
+    const role = user.role;
 
     const sidebarRef = useRef();
 
@@ -110,17 +111,19 @@ export default function Sidebar() {
                                 </div>
                             </NavLink>
                         </li>
-                        <li>
-                            <NavLink
-                                href={route('users.index')}
-                                active={route().current('users.*')}
-                            >
-                                <div className="flex items-end gap-2">
-                                    <Users className="h-5 w-5" />
-                                    <span>مدیریت کاربران</span>
-                                </div>
-                            </NavLink>
-                        </li>
+                        {role === 'admin' && (
+                            <li>
+                                <NavLink
+                                    href={route('users.index')}
+                                    active={route().current('users.*')}
+                                >
+                                    <div className="flex items-end gap-2">
+                                        <Users className="h-5 w-5" />
+                                        <span>مدیریت کاربران</span>
+                                    </div>
+                                </NavLink>
+                            </li>
+                        )}
                         <li>
                             <NavLink
                                 href={route('contacts.index')}
