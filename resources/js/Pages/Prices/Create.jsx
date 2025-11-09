@@ -1,12 +1,12 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
-import { PlusCircle, Save, Search } from 'lucide-react';
+import { Loader2, PlusCircle, Save, Search } from 'lucide-react';
 import { useState } from 'react';
 import { toast, Toaster } from 'sonner';
 
 export default function SellersTable({ sellers = [] }) {
-    const [codes, setCodes] = useState([{ id: 1, code: '' }]);
+    const [codes, setCodes] = useState([]);
     const [prices, setPrices] = useState(
         sellers.reduce((acc, s) => ({ ...acc, [s.id]: {} }), {}),
     );
@@ -34,15 +34,36 @@ export default function SellersTable({ sellers = [] }) {
     const submit = async () => {
         try {
             setLoading(true);
-            const payload = sellers.map((s) => ({
-                seller_id: s.id,
-                codes: codes
-                    .filter((c) => prices[s.id][c.id])
-                    .map((c) => ({
-                        code: c.code,
-                        price: prices[s.id][c.id],
-                    })),
-            }));
+
+            const payload = sellers
+                .map((s) => ({
+                    seller_id: s.id,
+                    codes: codes
+                        .filter(
+                            (c) =>
+                                c.code?.trim() && // code is not empty
+                                prices[s.id]?.[c.id] !== undefined &&
+                                prices[s.id][c.id] !== '', // price is not empty
+                        )
+                        .map((c) => ({
+                            code: c.code,
+                            price: prices[s.id][c.id],
+                        })),
+                }))
+                .filter((s) => s.codes.length > 0); // remove sellers with no valid codes
+
+            if (payload.length === 0) {
+                toast.error('لطفا حداقل یک کد و قیمت معتبر وارد نمایید.', {
+                    position: 'bottom-left',
+                    style: {
+                        backgroundColor: 'orange',
+                        fontFamily: 'Vazir',
+                        color: 'white',
+                        fontWeight: 'bold',
+                    },
+                });
+                return;
+            }
 
             await axios.post(route('prices.store'), { data: payload });
 
@@ -58,7 +79,7 @@ export default function SellersTable({ sellers = [] }) {
             });
         } catch (err) {
             console.error(err);
-            toast.success('خطا در انجام عملیات', {
+            toast.error('خطا در انجام عملیات', {
                 description:
                     'عملیات ثبت قیمت های بازار ناموفق بود، لطفا بعدا تلاش نمایید.',
                 position: 'bottom-left',
@@ -130,7 +151,7 @@ export default function SellersTable({ sellers = [] }) {
                                             <div className="relative flex gap-1">
                                                 <input
                                                     type="text"
-                                                    placeholder="کد فنی قطعه"
+                                                    placeholder="کد فنی"
                                                     value={code.code}
                                                     onChange={(e) =>
                                                         handleCodeChange(
@@ -157,14 +178,27 @@ export default function SellersTable({ sellers = [] }) {
                                         </th>
                                     ))}
                                     <th className="border-b px-2 py-2 text-center">
-                                        <button
-                                            type="button"
-                                            onClick={addCodeColumn}
-                                            title="افزودن کد جدید"
-                                            className="rounded-full p-1 text-gray-600 transition hover:bg-gray-200"
-                                        >
-                                            <PlusCircle className="h-5 w-5" />
-                                        </button>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={addCodeColumn}
+                                                title="افزودن کد جدید"
+                                                className="rounded-full p-1 text-gray-600 transition hover:bg-gray-200"
+                                            >
+                                                <PlusCircle className="h-5 w-5" />
+                                            </button>
+                                            <span
+                                                onClick={submit}
+                                                disabled={loading}
+                                                title="ثبت کد ها"
+                                            >
+                                                {loading ? (
+                                                    <Loader2 className="h-5 w-5 animate-spin" />
+                                                ) : (
+                                                    <Save className="h-5 w-5 cursor-pointer" />
+                                                )}
+                                            </span>
+                                        </div>
                                     </th>
                                 </tr>
                             </thead>
