@@ -11,7 +11,7 @@ use App\Http\Controllers\SellerController;
 use App\Http\Controllers\TelegramController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-
+use Inertia\Inertia;
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -81,6 +81,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/responses', [ResponseController::class, 'index'])->name('response.index');
     Route::post('/responses', [ResponseController::class, 'getResponse'])->name('response.get');
+
+    Route::fallback(function () {
+        return Inertia::render('Errors/404');
+    });
 });
 
 
