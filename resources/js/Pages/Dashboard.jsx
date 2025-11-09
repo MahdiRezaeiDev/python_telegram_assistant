@@ -6,6 +6,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import MonthlyStatsChart from '@/Components/UI/MonthlyStatsChart';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
@@ -19,22 +20,13 @@ import {
     Search,
 } from 'lucide-react';
 import { useState } from 'react';
-import {
-    CartesianGrid,
-    Line,
-    LineChart,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis,
-} from 'recharts';
 import { toast, Toaster } from 'sonner';
 
 export default function Dashboard({
     totalTodayMessages,
     totalSavedGoods,
     is_connected,
-    reports = {},
+    monthlyStats = {},
     responseList,
     unrespondedMessages,
 }) {
@@ -46,15 +38,6 @@ export default function Dashboard({
         is_connected: is_connected ?? 0,
         activeChats: 128,
     };
-
-    const chartData = reports.trend ?? [
-        { label: 'فروردین', messages: 400 },
-        { label: 'اردیبهشت', messages: 700 },
-        { label: 'خرداد', messages: 600 },
-        { label: 'تیر', messages: 900 },
-        { label: 'مرداد', messages: 750 },
-        { label: 'شهریور', messages: 1050 },
-    ];
 
     const toggleAccountStatus = async () => {
         const res = await axios.post(route('toggleConnection'));
@@ -167,22 +150,10 @@ export default function Dashboard({
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div style={{ width: '100%', height: 260 }}>
-                                <ResponsiveContainer>
-                                    <LineChart data={chartData}>
-                                        <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="label" />
-                                        <YAxis />
-                                        <Tooltip />
-                                        <Line
-                                            type="monotone"
-                                            dataKey="messages"
-                                            stroke="#0ea5e9"
-                                            strokeWidth={2}
-                                        />
-                                    </LineChart>
-                                </ResponsiveContainer>
-                            </div>
+                            <MonthlyStatsChart
+                                data={monthlyStats}
+                                usePersian={true}
+                            />
                         </CardContent>
                     </Card>
 

@@ -57,8 +57,6 @@ class DashboardController extends Controller
             ];
         }
 
-        dd($monthlyStats);
-
         return Inertia::render('Dashboard', [
             'totalTodayMessages' => $totalTodayMessages,
             'totalSavedGoods' => $totalSavedGoods,
