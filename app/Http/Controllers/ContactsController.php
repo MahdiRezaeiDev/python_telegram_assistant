@@ -122,8 +122,6 @@ class ContactsController extends Controller
         // Decode JSON response
         $data = $response->json();
 
-        // Assuming your Flask API returns something like:
-        // { "members": [ { "id": 123, "first_name": "...", "username": "...", ... }, ... ] }
         $members = $data['members'] ?? [];
 
         foreach ($members as $member) {

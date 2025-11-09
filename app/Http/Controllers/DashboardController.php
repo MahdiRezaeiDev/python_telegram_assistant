@@ -7,7 +7,6 @@ use App\Models\OutgoingMessage;
 use App\Models\Product;
 use App\Models\TelegramAccount;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Morilog\Jalali\Jalalian;
@@ -48,7 +47,7 @@ class DashboardController extends Controller
             // محاسبه آمار مالی
             $incoming = IncomingMessage::whereBetween('created_at', [$startGregorian, $endGregorian])->sum('id');
 
-            $outgoing = OutgoingMessage::whereBetween('created_at', [$startGregorian, $endGregorian])->sum('id');
+            $outgoing = OutgoingMessage::whereBetween('created_at', [$startGregorian, $endGregorian])->where('user_id', Auth::id())->sum('id');
 
             $monthlyStats[] = [
                 'month' => $startGregorian->translatedFormat('F'), // اسم ماه به فارسی

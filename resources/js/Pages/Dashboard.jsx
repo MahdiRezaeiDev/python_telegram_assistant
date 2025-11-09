@@ -19,6 +19,7 @@ import {
     MessageSquare,
     Search,
 } from 'lucide-react';
+import moment from 'moment';
 import { useState } from 'react';
 import { toast, Toaster } from 'sonner';
 
@@ -81,9 +82,11 @@ export default function Dashboard({
                         </div>
                         <SecondaryButton
                             onClick={toggleAccountStatus}
-                            className="bg-teal-700"
+                            className="text-teal-700"
                         >
-                            توقف ارسال پیام
+                            {status === 1
+                                ? ' توقف ارسال پیام'
+                                : 'از سر گیری ارسال'}
                         </SecondaryButton>
                     </div>
                 </header>
@@ -174,10 +177,12 @@ export default function Dashboard({
                                     >
                                         <div className="flex items-center justify-between">
                                             <div className="text-sm font-medium">
-                                                {r.sender.fullname}
+                                                {r.sender.full_name}
                                             </div>
                                             <div className="text-xs text-slate-400">
-                                                {r.time}
+                                                {moment(r.created_at).format(
+                                                    'h:m',
+                                                )}
                                             </div>
                                         </div>
                                         <div className="mt-1 text-sm text-slate-700">
@@ -190,7 +195,7 @@ export default function Dashboard({
                                                 </span>
                                             ) : (
                                                 <span className="text-orange-600">
-                                                    ⚠️ بدون قیمت
+                                                    ⚠️ پاسخ ارسال نشده
                                                 </span>
                                             )}
                                         </div>
