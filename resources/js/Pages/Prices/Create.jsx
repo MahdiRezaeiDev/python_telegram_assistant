@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import axios from 'axios';
-import { PlusCircle, Save } from 'lucide-react';
+import { PlusCircle, Save, Search } from 'lucide-react';
 import { useState } from 'react';
 import { toast, Toaster } from 'sonner';
 
@@ -11,6 +11,7 @@ export default function SellersTable({ sellers = [] }) {
         sellers.reduce((acc, s) => ({ ...acc, [s.id]: {} }), {}),
     );
     const [loading, setLoading] = useState(false);
+    const [search, setSearch] = useState('');
 
     const addCodeColumn = () => {
         setCodes((prev) => [...prev, { id: prev.length + 1, code: '' }]);
@@ -44,9 +45,15 @@ export default function SellersTable({ sellers = [] }) {
 
             await axios.post(route('prices.store'), { data: payload });
 
-            toast.success('قیمت‌ها با موفقیت ذخیره شدند.', {
+            toast.success('عملیات موفقانه انجام شد.', {
+                description: 'قیمت های گرفته شما موفقانه ثبت سیستم گردید.',
                 position: 'bottom-left',
-                duration: 4000,
+                style: {
+                    backgroundColor: 'seagreen',
+                    fontFamily: 'Vazir',
+                    color: 'white',
+                    fontWeight: 'bold',
+                },
             });
         } catch (err) {
             console.error(err);
@@ -56,53 +63,48 @@ export default function SellersTable({ sellers = [] }) {
         }
     };
 
-    // Remove a code column
     const removeCodeColumn = (codeId) => {
-        // Remove code from codes array
         setCodes((prev) => prev.filter((c) => c.id !== codeId));
-
-        // Remove prices associated with this code for all sellers
         setPrices((prev) => {
             const updated = { ...prev };
             Object.keys(updated).forEach((sellerId) => {
-                if (updated[sellerId][codeId] !== undefined) {
-                    delete updated[sellerId][codeId];
-                }
+                delete updated[sellerId][codeId];
             });
             return updated;
         });
     };
 
+    // Filter sellers by search
+    const filteredSellers = sellers.filter((s) =>
+        s.full_name.toLowerCase().includes(search.toLowerCase()),
+    );
+
     return (
-        <AuthenticatedLayout title="لیست فروشنده‌ها و قیمت‌ها">
+        <AuthenticatedLayout title="ثبت قیمت های بازار">
             <Head title="قیمت‌ها" />
             <Toaster richColors />
 
             <div className="min-h-screen bg-gray-50 p-6">
-                <div className="mx-auto w-full max-w-6xl">
-                    {/* Header */}
-                    <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div className="mx-auto w-full max-w-6xl space-y-4">
+                    {/* Header & Search */}
+                    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                         <h1 className="text-2xl font-semibold text-gray-800">
-                            لیست فروشنده‌ها و قیمت‌ها
+                            ثبت قیمت های بازار
                         </h1>
-                        <div className="flex flex-wrap gap-2">
-                            <Link
-                                href={route('prices.index')}
-                                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
-                            >
-                                لیست قیمت‌ها
-                            </Link>
-                            <Link
-                                href={route('sellers.index')}
-                                className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-green-700"
-                            >
-                                لیست فروشنده‌ها
-                            </Link>
+                        <div className="relative flex items-center gap-2">
+                            <Search className="absolute left-2 h-5 w-5 text-gray-500" />
+                            <input
+                                type="text"
+                                placeholder="جستجوی فروشنده..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-300 md:w-64"
+                            />
                         </div>
                     </div>
 
                     {/* Table */}
-                    <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+                    <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
                         <table className="min-w-full border-collapse text-sm">
                             <thead className="bg-gray-100 text-gray-700">
                                 <tr>
@@ -112,9 +114,9 @@ export default function SellersTable({ sellers = [] }) {
                                     {codes.map((code, idx) => (
                                         <th
                                             key={code.id}
-                                            className="px-1 py-3 text-right"
+                                            className="px-2 py-2 text-right"
                                         >
-                                            <div className="flex gap-1">
+                                            <div className="relative flex gap-1">
                                                 <input
                                                     type="text"
                                                     placeholder="کد فنی قطعه"
@@ -125,7 +127,7 @@ export default function SellersTable({ sellers = [] }) {
                                                             e.target.value,
                                                         )
                                                     }
-                                                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-300"
+                                                    className="w-full rounded border border-gray-300 p-2 text-sm text-gray-700 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-300"
                                                 />
                                                 <button
                                                     type="button"
@@ -134,7 +136,7 @@ export default function SellersTable({ sellers = [] }) {
                                                             code.id,
                                                         )
                                                     }
-                                                    className="text-red-600 hover:text-red-800"
+                                                    className="absolute left-2 top-[6px] text-xl text-red-600 hover:text-red-800"
                                                     title="حذف کد"
                                                 >
                                                     ×
@@ -155,10 +157,14 @@ export default function SellersTable({ sellers = [] }) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {sellers.map((seller) => (
+                                {filteredSellers.map((seller, idx) => (
                                     <tr
                                         key={seller.id}
-                                        className="transition hover:bg-gray-50"
+                                        className={`transition hover:bg-gray-50 ${
+                                            idx % 2 === 0
+                                                ? 'bg-white'
+                                                : 'bg-gray-50'
+                                        }`}
                                     >
                                         <td className="border-b px-4 py-2 font-medium text-gray-800">
                                             {seller.full_name}
@@ -182,26 +188,36 @@ export default function SellersTable({ sellers = [] }) {
                                                             e.target.value,
                                                         )
                                                     }
-                                                    className="w-full rounded border border-gray-300 px-2 py-1 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-300"
+                                                    className="w-full rounded border border-gray-300 p-2 text-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-300"
                                                 />
                                             </td>
                                         ))}
                                         <td className="border-b px-2 py-2"></td>
                                     </tr>
                                 ))}
+                                {filteredSellers.length === 0 && (
+                                    <tr>
+                                        <td
+                                            colSpan={codes.length + 2}
+                                            className="py-4 text-center text-gray-500"
+                                        >
+                                            فروشنده‌ای پیدا نشد.
+                                        </td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
                     </div>
 
                     {/* Submit */}
-                    <div className="mt-4 flex justify-end">
+                    <div className="flex justify-start">
                         <button
                             onClick={submit}
                             disabled={loading}
                             className={`flex items-center gap-2 rounded-md px-4 py-2 font-medium text-white transition ${
                                 loading
-                                    ? 'cursor-not-allowed bg-green-400'
-                                    : 'bg-green-600 hover:bg-green-700'
+                                    ? 'cursor-not-allowed bg-cyan-400'
+                                    : 'bg-cyan-600 hover:bg-cyan-700'
                             }`}
                         >
                             <Save className="h-5 w-5" />
