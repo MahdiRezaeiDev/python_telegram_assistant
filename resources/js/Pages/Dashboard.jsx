@@ -48,12 +48,12 @@ export default function Dashboard({
     };
 
     const chartData = reports.trend ?? [
-        { label: 'فروردین', msgs: 400 },
-        { label: 'اردیبهشت', msgs: 700 },
-        { label: 'خرداد', msgs: 600 },
-        { label: 'تیر', msgs: 900 },
-        { label: 'مرداد', msgs: 750 },
-        { label: 'شهریور', msgs: 1050 },
+        { label: 'فروردین', messages: 400 },
+        { label: 'اردیبهشت', messages: 700 },
+        { label: 'خرداد', messages: 600 },
+        { label: 'تیر', messages: 900 },
+        { label: 'مرداد', messages: 750 },
+        { label: 'شهریور', messages: 1050 },
     ];
 
     const toggleAccountStatus = async () => {
@@ -176,7 +176,7 @@ export default function Dashboard({
                                         <Tooltip />
                                         <Line
                                             type="monotone"
-                                            dataKey="msgs"
+                                            dataKey="messages"
                                             stroke="#0ea5e9"
                                             strokeWidth={2}
                                         />

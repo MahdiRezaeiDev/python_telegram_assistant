@@ -19,7 +19,7 @@ Route::get('/products/downloadSample', [ProductController::class, 'downloadSampl
 
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('home');
 
     Route::middleware('role:admin')->resource('/users', UserController::class)->except('show');
 

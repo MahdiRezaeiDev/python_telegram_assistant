@@ -8,7 +8,6 @@ import {
     CreditCard,
     LayoutDashboard,
     MenuIcon,
-    MessageCircleHeartIcon,
     MessageSquareCode,
     Rotate3D,
     User,
@@ -103,7 +102,10 @@ export default function Sidebar() {
                         <li>
                             <NavLink
                                 href={route('dashboard')}
-                                active={route().current('dashboard')}
+                                active={
+                                    route().current('dashboard') ||
+                                    route().current('home')
+                                }
                             >
                                 <div className="flex items-end gap-2">
                                     <LayoutDashboard className="h-5 w-5" />
@@ -187,17 +189,6 @@ export default function Sidebar() {
                                 <div className="flex items-end gap-2">
                                     <CreditCard className="h-5 w-5" />
                                     <span>فروشنده های ثبت شده</span>
-                                </div>
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink
-                                href={route('response.index')}
-                                active={route().current('response.index')}
-                            >
-                                <div className="flex items-end gap-2">
-                                    <MessageCircleHeartIcon className="h-5 w-5" />
-                                    <span>پیام های شما</span>
                                 </div>
                             </NavLink>
                         </li>
