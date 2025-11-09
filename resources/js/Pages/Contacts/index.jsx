@@ -237,7 +237,7 @@ export default function Index({ contacts }) {
                                                     colSpan="7"
                                                     className="p-4 text-center text-sm"
                                                 >
-                                                    هیچ پرسنلی یافت نشد.
+                                                    هیچ مخاطبی پیدا نشد.
                                                 </td>
                                             </tr>
                                         )}
