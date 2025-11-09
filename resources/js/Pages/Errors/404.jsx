@@ -8,14 +8,16 @@ export default function NotFound() {
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.6 }}
                 className="p-6 text-center"
             >
-                <h1 className="text-8xl font-extrabold text-gray-900">404</h1>
-                <p className="mt-4 text-2xl font-semibold">Page Not Found</p>
+                <h1 className="text-8xl font-extrabold text-gray-900">۴۰۴</h1>
+                <p className="mt-4 text-2xl font-semibold">
+                    صفحه مورد نظر یافت نشد
+                </p>
                 <p className="mt-2 text-gray-500">
-                    Sorry, the page you’re looking for doesn’t exist or has been
-                    moved.
+                    متأسفانه صفحه‌ای که به دنبال آن بودید وجود ندارد یا حذف شده
+                    است.
                 </p>
 
                 <Link
@@ -23,7 +25,7 @@ export default function NotFound() {
                     className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-6 py-3 text-white shadow transition-all duration-200 hover:bg-blue-700"
                 >
                     <Home size={20} />
-                    Back to Home
+                    بازگشت به صفحه اصلی
                 </Link>
             </motion.div>
         </div>
