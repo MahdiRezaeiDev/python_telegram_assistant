@@ -1,6 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, router } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import axios from 'axios';
+import moment from 'jalali-moment';
 import { Pencil, Trash } from 'lucide-react';
 import { useState } from 'react';
 import { toast, Toaster } from 'sonner';
@@ -12,6 +13,9 @@ export default function PricesIndex({ prices: initialPrices }) {
     const [loading, setLoading] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState(null); // For delete modal
+
+    const { auth } = usePage().props;
+    const user = auth.user;
 
     // --- Open edit modal ---
     const openEditModal = (price) => {
@@ -91,6 +95,8 @@ export default function PricesIndex({ prices: initialPrices }) {
                                     کد فنی قطعه
                                 </th>
                                 <th className="px-4 py-3 text-right">قیمت</th>
+                                <th className="px-4 py-3 text-right">زمان</th>
+                                <th className="px-4 py-3 text-right">کاربر</th>
                                 <th className="px-4 py-3 text-center">
                                     عملیات
                                 </th>
@@ -117,6 +123,14 @@ export default function PricesIndex({ prices: initialPrices }) {
                                         <td className="px-4 py-3 text-gray-800">
                                             {price.price.toLocaleString()}
                                         </td>
+                                        <td className="px-4 py-3 text-gray-800">
+                                            {moment(price.created_at).format(
+                                                'jYYYY/jMM/jDD HH:mm',
+                                            )}
+                                        </td>
+                                        <td className="px-4 py-3 text-gray-800">
+                                            {user.name}
+                                        </td>
                                         <td className="flex justify-center gap-2 px-4 py-3 text-center">
                                             <button
                                                 onClick={() =>
@@ -142,7 +156,7 @@ export default function PricesIndex({ prices: initialPrices }) {
                             ) : (
                                 <tr>
                                     <td
-                                        colSpan="4"
+                                        colSpan="7"
                                         className="py-4 text-center text-gray-500"
                                     >
                                         هیچ قیمتی یافت نشد.

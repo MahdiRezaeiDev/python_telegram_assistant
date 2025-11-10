@@ -175,7 +175,7 @@ export default function SellersView({ sellers: initialSellers = [] }) {
                     </h1>
                     <button
                         onClick={() => openModal()}
-                        className="inline-flex items-center gap-2 rounded bg-cyan-700 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-green-700"
+                        className="inline-flex items-center gap-2 rounded bg-cyan-700 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-cyan-900"
                     >
                         افزودن فروشنده جدید
                     </button>
