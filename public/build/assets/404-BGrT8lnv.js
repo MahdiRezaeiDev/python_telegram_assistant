@@ -1,0 +1,6 @@
+import{j as e,L as t}from"./app-BqfSY66W.js";import{m as a}from"./proxy-Dznyyw_o.js";import{c as s}from"./createLucideIcon-Hng2jIgv.js";/**
+ * @license lucide-react v0.544.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */const i=[["path",{d:"M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8",key:"5wwlr5"}],["path",{d:"M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z",key:"r6nss1"}]],n=s("house",i);function c(){return e.jsx("div",{className:"flex min-h-screen flex-col items-center justify-center bg-gray-100 text-gray-800",children:e.jsxs(a.div,{initial:{opacity:0,y:20},animate:{opacity:1,y:0},transition:{duration:.6},className:"p-6 text-center",children:[e.jsx("h1",{className:"text-8xl font-extrabold text-gray-900",children:"۴۰۴"}),e.jsx("p",{className:"mt-4 text-2xl font-semibold",children:"صفحه مورد نظر یافت نشد"}),e.jsx("p",{className:"mt-2 text-gray-500",children:"متأسفانه صفحه‌ای که به دنبال آن بودید وجود ندارد یا حذف شده است."}),e.jsxs(t,{href:"/",className:"mt-6 inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-6 py-3 text-white shadow transition-all duration-200 hover:bg-blue-700",children:[e.jsx(n,{size:20}),"بازگشت به صفحه اصلی"]})]})})}export{c as default};
